@@ -11,14 +11,14 @@ su builduser
 cd ~
 abuild-keygen -a -i -n -q
 
-wget https://github.com/TOMATO-ONE/xrdp-proxy/blob/devel/srcpkg/neutrinordp-1.0.1-0.src.tar.gz 
+wget https://github.com/TOMATO-ONE/xrdp-proxy/blob/devel/srcpkg/neutrinordp-1.0.1-0.src.tar.gz?raw=true -O neutrinordp-1.0.1-0.src.tar.gz
 tar zxvf ./neutrinordp-1.0.1-0.src.tar.gz
 cd NeutrinoRDP/
 abuild -r
 
 sudo apk add --update --no-cache ~/packages/builduser/x86_64/neutrinordp-dev-1.0.1-r0.apk ~/packages/builduser/x86_64/neutrinordp-libs-1.0.1-r0.apk
 
-wget https://github.com/TOMATO-ONE/xrdp-proxy/blob/devel/srcpkg/xrdp-0.9.13-1.src.tar.gz
+wget https://github.com/TOMATO-ONE/xrdp-proxy/blob/devel/srcpkg/xrdp-0.9.13-1.src.tar.gz?raw=true -O xrdp-0.9.13-1.src.tar.gz
 tar zxf ./xrdp-0.9.13-1.src.tar.gz
 cd xrdp/
 abuild -r
@@ -26,9 +26,10 @@ abuild -r
 
 # 通常のAlpine Linuxにインストールして起動する手順
 # ( 別ホストでapk add　するときには --allow-untrusted を付加してください。)
-sudo apk add --update --no-cache ~/packages/NeutrinoRDP/x86_64/xrdp-0.9.13-r1.apk ~/packages/NeutrinoRDP/x86_64/xrdp-openrc-0.9.13-r1.apk 
+sudo apk add --update --no-cache ~/packages/builduser/x86_64/xrdp-0.9.13-r1.apk ~/packages/builduser/x86_64/xrdp-openrc-0.9.13-r1.apk 
 exit
-sudo apk add --update --no-cache openrc 
+
+apk add --update --no-cache openrc 
 rc-update add xrdp-sesman
 rc-update add xrdp
 rc-service xrdp-sesman start
@@ -42,7 +43,7 @@ sed -i 's/^#rc_provide="!net"/rc_provide="loopback net"/' /etc/rc.conf
 sed -i'.bak' '/getty/d' /etc/inittab
 sed -i'.bak' 's/mount -t tmpfs/# mount -t tmpfs/' /lib/rc/sh/init.sh
 sed -i'.bak' 's/hostname $opts/# hostname $opts/' /etc/init.d/hostname
-mkdir /run/openrc
+mkdir -p /run/openrc
 touch /run/openrc/softlevel
 rc-status
 rc-update add xrdp-sesman
