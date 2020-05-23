@@ -60,6 +60,8 @@ usermod -G tsusers <username>
 
 # build後のクリーンアップ
 deluser --remove-home builduser
+rm -f /etc/sudoers.d/builduser
 apk del --purge neutrinordp-dev alpine-sdk
+
 # ※ abuild -r 最中にインストールされたpkg はbuild終了時に削除されます。 
 
