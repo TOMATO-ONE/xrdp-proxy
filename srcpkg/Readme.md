@@ -84,3 +84,33 @@ rm -f /etc/sudoers.d/builduser
 apk del --purge neutrinordp-dev alpine-sdk
 # ※ abuild -r 最中にインストールされたpkg はbuild終了時に削除されます。 
 ```
+
+# 既知の不具合
+##  ログイン後、日本語キーボードを使っているにも関わらず、英語のキー配列になってしまう。
+   NeutrinoRDPモジュールの不具合が原因です。
+   ワークアラウンドとして、接続先Windows側のレジストリを変更し、KBDJPN.DLLの代わりに kbd106.dll を定義し、再起動してください。
+
+接続先Windowsの管理者権限でコマンドプロンプトを起動し、以下のコマンドを実行してください。
+```
+# 変更前確認
+reg query  "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layouts\00000411" /v "Layout File" 
+
+# レジストリ変更
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layouts\00000411" /v "Layout File" /d "kbd106.DLL
+
+# 変更後確認
+reg query  "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layouts\00000411" /v "Layout File" 
+
+# 再起動実施
+shutdown /r 
+```
+
+## 接続後、マウスカーソルが黒い四角になってしまう
+  NeutrinoRDPモジュールの不具合が原因です。
+   ワークアラウンドとして、接続先Windows側で影を無効にするようにマウスカーソルの設定を変更してください。
+```
+	[設定]-[デバイス]-[マウス]-[その他のマウスオプション]-[ポインター]
+	「ポインターの影を有効にする」のチェックボックスを OFFにする
+```
+
+-
