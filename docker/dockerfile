@@ -25,14 +25,12 @@ RUN sed -i 's/#rc_sys=""/rc_sys="lxc"/g' /etc/rc.conf ; \
     touch /run/openrc/softlevel && \
     rc-status && \
     rc-update add xrdp-sesman && \
-    rc-update add xrdp
+#    rc-update add xrdp && \
+    wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/docker/entrypoint.sh -O /root/entrypoint.sh && \
+    chmod +x /root/entrypoint.sh
 
 EXPOSE 3389
 VOLUME /sys/fs/cgroup
 VOLUME /var/log
-#VOLUME /etc/xrdp/xrdp.ini
-#VOLUME /etc/xrdp/sesman.ini
 
-ADD https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/docker/entrypoint.sh /root/entrypoint.sh
-
-ENTRYPOINT [/root/entrypoint.sh]
+ENTRYPOINT [ "/root/entrypoint.sh" ]
