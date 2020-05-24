@@ -1,7 +1,7 @@
 # xrdp-proxy
-これはNeutrinoRDP-any (RDP Proxy)モジュールを有効にしたxrdpをbuildするためのAlpine Linux用source pakage です。
-lib に依存するためNeutrinoRDP のbuildも必要です。
-NeutrinoRDPはFreeRDP 1.0.1からforkしたRDP client ですがファイル名の関係でFreeRDPと共存できません。
+これはNeutrinoRDP-any (RDP Proxy)モジュールを有効にしたxrdpをbuildするためのAlpine Linux用source pakage です。  
+lib に依存するためNeutrinoRDP のbuildも必要です。  
+NeutrinoRDPはFreeRDP 1.0.1からforkしたRDP client ですがファイル名の関係でFreeRDPと共存できません。  
 
 インストール直後のAlpine Linux 3.11 から以下の手順でbinary package をbuild できます。
 
@@ -38,7 +38,7 @@ abuild -r
 ```
 
 
- 通常のAlpine Linuxにインストールして起動する手順
+ 通常のAlpine Linuxにインストールして起動する手順  
  ( 別ホストでapk add　するときには --allow-untrusted を付加してください。)
 ```
 sudo apk add --update --no-cache ~/packages/builduser/x86_64/xrdp-0.9.13-r1.apk ~/packages/builduser/x86_64/xrdp-openrc-0.9.13-r1.apk 
@@ -51,9 +51,7 @@ rc-service xrdp-sesman start
 rc-service xrdp start
 ```
 
-Alpine Linux のdocker コンテナ内で起動するには
-ホストOS側の /sys/fs/cgroup をvolumeマウント(-v /sys/fs/cgroup)してコンテナ起動した上で
-以下の追加設定を行ってください。
+Alpine Linux のdocker コンテナ内で起動するにはホストOS側の /sys/fs/cgroup をvolumeマウント`(-v /sys/fs/cgroup)`してコンテナ起動した上で以下の追加設定を行ってください。
 ```
 sed -i 's/#rc_sys=""/rc_sys="lxc"/g' /etc/rc.conf
 sed -i 's/^#rc_provide="!net"/rc_provide="loopback net"/' /etc/rc.conf
