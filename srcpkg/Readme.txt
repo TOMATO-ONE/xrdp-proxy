@@ -3,6 +3,9 @@ lib に依存するためNeutrinoRDP のbuildも必要です。
 NeutrinoRDPはFreeRDP 1.0.1からforkしたRDP client ですがファイル名の関係でFreeRDPと共存できません。
 
 #インストール直後のAlpine Linux 3.11 から以下の手順でbinary package をbuild できます。
+
+sed -i'.bak' -e "s/^#\(http:\/\/mirror.xtom.com.hk\/alpine\/v3.11\/community\)/\1/1" /etc/apk/repositories
+
 apk add --update --no-cache alpine-sdk
 adduser -D builduser
 addgroup builduser abuild
@@ -11,6 +14,7 @@ su builduser
 cd ~
 abuild-keygen -a -i -n -q
 
+apk update
 wget https://github.com/TOMATO-ONE/xrdp-proxy/blob/devel/srcpkg/neutrinordp-1.0.1-0.src.tar.gz?raw=true -O neutrinordp-1.0.1-0.src.tar.gz
 tar zxvf ./neutrinordp-1.0.1-0.src.tar.gz
 cd NeutrinoRDP/
