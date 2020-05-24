@@ -1,4 +1,4 @@
-#xrdp-proxy
+# xrdp-proxy
 これはNeutrinoRDP-any (RDP Proxy)モジュールを有効にしたxrdpをbuildするためのAlpine Linux用source pakage です。
 lib に依存するためNeutrinoRDP のbuildも必要です。
 NeutrinoRDPはFreeRDP 1.0.1からforkしたRDP client ですがファイル名の関係でFreeRDPと共存できません。
@@ -36,9 +36,10 @@ abuild -r
 # /home/builduser/package 以下に apk binary package が生成されます。
 ```
 
+
+ 通常のAlpine Linuxにインストールして起動する手順
+ ( 別ホストでapk add　するときには --allow-untrusted を付加してください。)
 ```
-# 通常のAlpine Linuxにインストールして起動する手順
-# ( 別ホストでapk add　するときには --allow-untrusted を付加してください。)
 sudo apk add --update --no-cache ~/packages/builduser/x86_64/xrdp-0.9.13-r1.apk ~/packages/builduser/x86_64/xrdp-openrc-0.9.13-r1.apk 
 exit
 
@@ -49,9 +50,9 @@ rc-service xrdp-sesman start
 rc-service xrdp start
 ```
 
-# Alpine Linux のdocker コンテナ内で起動するには
-# ホストOS側の /sys/fs/cgroup をvolumeマウント(-v /sys/fs/cgroup)してコンテナ起動した上で
-# 以下の追加設定を行ってください。
+Alpine Linux のdocker コンテナ内で起動するには
+ホストOS側の /sys/fs/cgroup をvolumeマウント(-v /sys/fs/cgroup)してコンテナ起動した上で
+以下の追加設定を行ってください。
 
 ```
 sed -i 's/#rc_sys=""/rc_sys="lxc"/g' /etc/rc.conf
@@ -68,8 +69,8 @@ rc-service xrdp-sesman start
 rc-service xrdp start
 ```
 
-# /etc/xrdp/xrdp.ini を編集し、RDP/VNC 接続時の Linux PAM認証をする場合には
-# 接続許可ユーザを tsusers グループに所属させてください。
+/etc/xrdp/xrdp.ini を編集し、RDP/VNC 接続時の Linux PAM認証をする場合には
+接続許可ユーザを tsusers グループに所属させてください。
 ```
 apk add --update --no-cache linux-pam shadow
 groupadd tsusers
@@ -79,7 +80,7 @@ passwd <username>
 # ※グループ名をtsusersから変更するには /etc/xrdp/sesman.ini を編集してください。
 ```
 
-# build後のクリーンアップ
+build後のクリーンアップ
 ```
 deluser --remove-home builduser
 rm -f /etc/sudoers.d/builduser
