@@ -70,10 +70,9 @@ rc-service xrdp start
 /etc/xrdp/xrdp.ini を編集し、RDP/VNC 接続時の Linux PAM認証をする場合には
 接続許可ユーザを tsusers グループに所属させてください。
 ```
-apk add --update --no-cache linux-pam shadow
-groupadd tsusers
-useradd <username>
-usermod -G tsusers <username>
+apk add --update --no-cache linux-pam
+addgroup tsusers
+adduser -G tsusers -D -H -h /dev/null -s /sbin/nologin -g "xrdp user" <username>
 passwd <username>
 # ※グループ名をtsusersから変更するには /etc/xrdp/sesman.ini を編集してください。
 ```
