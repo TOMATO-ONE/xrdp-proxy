@@ -54,5 +54,5 @@ addgroup tsusers
 adduser -G tsusers -D -H -h /dev/null -s /sbin/nologin -g "xrdp user" <username>
 passwd <username>
 ```
-- グループ名をtsusersから変更するには /etc/xrdp/sesman.ini を編集してください。
+- グループ名を`tsusers`から変更するには /etc/xrdp/sesman.ini を編集してください。
 
