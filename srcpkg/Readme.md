@@ -6,10 +6,10 @@ NeutrinoRDPはFreeRDP 1.0.1からforkしたRDP client ですがファイル名�
 インストール直後のAlpine Linux 3.11 から以下の手順でbinary package をbuild できます。
 
 ```
-#
+# Alpine Linux community リポジトリを有効化
 sed -i'.bak' -e "s/^#\(http:\/\/mirror.xtom.com.hk\/alpine\/v3.11\/community\)/\1/1" /etc/apk/repositories
 
-#
+# build用ユーザの作成と準備
 apk add --update --no-cache alpine-sdk
 adduser -D builduser
 addgroup builduser abuild
@@ -18,16 +18,17 @@ su builduser
 cd ~
 abuild-keygen -a -i -n -q
 
-#
+# NeutrinoRDP のbuild
 wget https://github.com/TOMATO-ONE/xrdp-proxy/blob/devel/srcpkg/neutrinordp-1.0.1-0.src.tar.gz?raw=true -O neutrinordp-1.0.1-0.src.tar.gz
 tar zxvf ./neutrinordp-1.0.1-0.src.tar.gz
 cd NeutrinoRDP/
 sudo apk update
 abuild -r
 
+# xrdp に必要なneutrinordp-libs,neutrinordp-dev のインストール
 sudo apk add --update --no-cache ~/packages/builduser/x86_64/neutrinordp-dev-1.0.1-r0.apk ~/packages/builduser/x86_64/neutrinordp-libs-1.0.1-r0.apk
 
-#
+# xrdp のbuild
 cd ~
 wget https://github.com/TOMATO-ONE/xrdp-proxy/blob/devel/srcpkg/xrdp-0.9.13-1.src.tar.gz?raw=true -O xrdp-0.9.13-1.src.tar.gz
 tar zxf ./xrdp-0.9.13-1.src.tar.gz
@@ -53,7 +54,6 @@ rc-service xrdp start
 Alpine Linux のdocker コンテナ内で起動するには
 ホストOS側の /sys/fs/cgroup をvolumeマウント(-v /sys/fs/cgroup)してコンテナ起動した上で
 以下の追加設定を行ってください。
-
 ```
 sed -i 's/#rc_sys=""/rc_sys="lxc"/g' /etc/rc.conf
 sed -i 's/^#rc_provide="!net"/rc_provide="loopback net"/' /etc/rc.conf
