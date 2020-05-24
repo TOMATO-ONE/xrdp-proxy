@@ -19,7 +19,7 @@ cd ~
 abuild-keygen -a -i -n -q
 
 # NeutrinoRDP のbuild
-wget wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/apk/x86_64/neutrinordp-1.0.1-0.src.tar.gz
+wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/apk/x86_64/neutrinordp-1.0.1-0.src.tar.gz
 tar zxvf ./neutrinordp-1.0.1-0.src.tar.gz
 cd NeutrinoRDP/
 sudo apk update
