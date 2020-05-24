@@ -21,39 +21,39 @@ NeutrinoRDPは FreeRDPのABUILDファイルを流用して生成しています�
 
 インストール方法  
 ```APKBUILD:title
-$ sudo apk add --update --no-cache ./neutrinordp-libs-1.0.1-r0.apk ./xrdp-0.9.13-r1.apk ./xrdp-openrc-0.9.13-r1.apk --allow-untrusted
+apk add --update --no-cache ./neutrinordp-libs-1.0.1-r0.apk ./xrdp-0.9.13-r1.apk ./xrdp-openrc-0.9.13-r1.apk --allow-untrusted
 
-$ sudo apk add --update --no-cache openrc 
-$ sudo rc-update add xrdp-sesman
-$ sudo rc-update add xrdp
-$ sudo rc-service xrdp-sesman start
-$ sudo rc-service xrdp start
+apk add --update --no-cache openrc 
+rc-update add xrdp-sesman
+rc-update add xrdp
+rc-service xrdp-sesman start
+rc-service xrdp start
 ```
 
 Alpine Linux のdocker コンテナ内で起動するにはホストOS側の /sys/fs/cgroup をvolumeマウント`(-v /sys/fs/cgroup)`してコンテナ起動した上で以下の追加設定を行ってください。
 ```
-$ sudo sed -i 's/#rc_sys=""/rc_sys="lxc"/g' /etc/rc.conf
-$ sudo sed -i 's/^#rc_provide="!net"/rc_provide="loopback net"/' /etc/rc.conf
-$ sudo sed -i'.bak' '/getty/d' /etc/inittab
-$ sudo sed -i'.bak' 's/mount -t tmpfs/# mount -t tmpfs/' /lib/rc/sh/init.sh
-$ sudo sed -i'.bak' 's/hostname $opts/# hostname $opts/' /etc/init.d/hostname
-$ sudo mkdir -p /run/openrc
-$ sudo touch /run/openrc/softlevel
-$ sudo rc-status
-$ sudo rc-update add xrdp-sesman
-$ sudo rc-update add xrdp
-$ sudo rc-service xrdp-sesman start
-$ sudo rc-service xrdp start
+sed -i 's/#rc_sys=""/rc_sys="lxc"/g' /etc/rc.conf
+sed -i 's/^#rc_provide="!net"/rc_provide="loopback net"/' /etc/rc.conf
+sed -i'.bak' '/getty/d' /etc/inittab
+sed -i'.bak' 's/mount -t tmpfs/# mount -t tmpfs/' /lib/rc/sh/init.sh
+sed -i'.bak' 's/hostname $opts/# hostname $opts/' /etc/init.d/hostname
+mkdir -p /run/openrc
+touch /run/openrc/softlevel
+rc-status
+rc-update add xrdp-sesman
+rc-update add xrdp
+rc-service xrdp-sesman start
+rc-service xrdp start
 ```
 
 /etc/xrdp/xrdp.ini を編集し、RDP/VNC 接続時の Linux PAM認証をする場合には
 接続許可ユーザを tsusers グループに所属させてください。
 ```
-$ sudo apk add --update --no-cache linux-pam shadow
-$ sudo groupadd tsusers
-$ sudo useradd <username>
-$ sudo usermod -G tsusers <username>
-$ sudo passwd <username>
+apk add --update --no-cache linux-pam shadow
+groupadd tsusers
+useradd <username>
+usermod -G tsusers <username>
+passwd <username>
 ```
 - グループ名をtsusersから変更するには /etc/xrdp/sesman.ini を編集してください。
 
