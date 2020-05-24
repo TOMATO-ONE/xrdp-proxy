@@ -1,6 +1,6 @@
 # xrdp-proxy
 これはNeutrinoRDP-any (RDP Proxy)モジュールを有効にしたxrdpをbuildするためのAlpine Linux用source pakage です。  
-lib に依存するためNeutrinoRDP のbuildも必要です。  
+libneutrinordp.so に依存するためNeutrinoRDP のbuildも必要です。  
 NeutrinoRDPはFreeRDP 1.0.1からforkしたRDP client ですがファイル名の関係でFreeRDPと共存できません。  
 
 インストール直後のAlpine Linux 3.11 から以下の手順でbinary package をbuild できます。
