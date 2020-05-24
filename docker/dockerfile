@@ -1,0 +1,38 @@
+FROM alpine:3.11
+
+LABEL MAINTAINER TOMATO
+
+# package install
+RUN  wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/apk/x86_64/xrdp-0.9.13-r1.apk && \
+     wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/apk/x86_64/xrdp-openrc-0.9.13-r1.apk && \
+     wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/apk/x86_64/neutrinordp-libs-1.0.1-r0.apk && \
+     apk add --update --no-cache \
+             ./neutrinordp-libs-1.0.1-r0.apk \
+             ./xrdp-0.9.13-r1.apk \
+             ./xrdp-openrc-0.9.13-r1.apk \
+             openrc \
+             linux-pam \
+             shadow \
+             --allow-untrusted
+
+# config
+RUN sed -i 's/#rc_sys=""/rc_sys="lxc"/g' /etc/rc.conf ; \
+    sed -i 's/^#rc_provide="!net"/rc_provide="loopback net"/' /etc/rc.conf ; \
+    sed -i'.bak' '/getty/d' /etc/inittab ; \
+    sed -i'.bak' 's/mount -t tmpfs/# mount -t tmpfs/' /lib/rc/sh/init.sh ; \
+    sed -i'.bak' 's/hostname $opts/# hostname $opts/' /etc/init.d/hostname ;\
+    mkdir -p /run/openrc && \
+    touch /run/openrc/softlevel && \
+    rc-status && \
+    rc-update add xrdp-sesman && \
+    rc-update add xrdp
+
+EXPOSE 3389
+VOLUME /sys/fs/cgroup
+VOLUME /var/log
+#VOLUME /etc/xrdp/xrdp.ini
+#VOLUME /etc/xrdp/sesman.ini
+
+ADD 
+
+ENTRYPOINT [/root/entrypoint.sh]
