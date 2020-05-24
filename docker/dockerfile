@@ -33,6 +33,6 @@ VOLUME /var/log
 #VOLUME /etc/xrdp/xrdp.ini
 #VOLUME /etc/xrdp/sesman.ini
 
-ADD 
+ADD https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/docker/entrypoint.sh /root/entrypoint.sh
 
 ENTRYPOINT [/root/entrypoint.sh]
