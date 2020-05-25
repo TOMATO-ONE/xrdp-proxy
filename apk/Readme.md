@@ -57,9 +57,13 @@ passwd <username>
 - グループ名を`tsusers`から変更するには /etc/xrdp/sesman.ini を編集してください。
 
 # 既知の不具合
-##  ログイン後、日本語キーボードを使っているにも関わらず、英語のキー配列になってしまう。
+##  日本語キーボードを使っているにも関わらず、ログイン後に接続先が英語キー配列になってしまう。
    NeutrinoRDPモジュールの不具合が原因です。
    ワークアラウンドとして、接続先Windows側のレジストリを変更し、KBDJPN.DLLの代わりに kbd106.dll を定義し、再起動してください。
+
+レジストリエディタを使って以下を
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layouts\00000411
+
 
 接続先Windowsの管理者権限でコマンドプロンプトを起動し、以下のコマンドを実行してください。
 ```
@@ -76,7 +80,7 @@ reg query  "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layouts
 shutdown /r 
 ```
 
-## 接続後、マウスカーソルが黒い四角になってしまう
+## 接続先にログイン後、マウスカーソルが黒い四角になってしまう
   NeutrinoRDPモジュールの不具合が原因です。
    ワークアラウンドとして、接続先Windows側で影を無効にするようにマウスカーソルの設定を変更してください。
 ```
