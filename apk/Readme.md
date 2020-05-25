@@ -46,6 +46,16 @@ rc-service xrdp-sesman start
 rc-service xrdp start
 ```
 
+dockerfileでimageをbuildし、コンテナ起動とともにxrdpを起動するようにしたい場合にはENTRYPOINTを工夫してみてください。
+- Linux PAM 認証が不要な場合(sesmanの起動が不要)：
+   `ENTRYPOINT ["/usr/sbin/xrdp","-n"] ` と記述  
+    
+- Linux PAM 認証も使いたい場合：
+   `/sbin/rc-service xrdp-sesman start` 実行後、  
+    最後に `/usr/sbin/xrdp -n` を実行するshellスクリプトを作成・COPYし、  
+   `ENTRYPOINT ["/entriypoint.sh"] ` などと記述  
+
+
 /etc/xrdp/xrdp.ini を編集し、RDP/VNC 接続時の Linux PAM認証をする場合には
 接続許可ユーザを tsusers グループに所属させてください。
 ```
