@@ -1,3 +1,0 @@
-wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/apk/x86_64/xrdp-0.9.13-r1.apk
-wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/apk/x86_64/xrdp-openrc-0.9.13-r1.apk
-wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/apk/x86_64/neutrinordp-libs-1.0.1-r0.apk
