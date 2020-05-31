@@ -30,32 +30,6 @@ rc-service xrdp-sesman start
 rc-service xrdp start
 ```
 
-Alpine Linux のdocker コンテナ内で起動するにはホストOS側の /sys/fs/cgroup をvolumeマウント`(-v /sys/fs/cgroup)`してコンテナ起動した上で以下の追加設定を行ってください。
-```
-sed -i 's/#rc_sys=""/rc_sys="lxc"/g' /etc/rc.conf
-sed -i 's/^#rc_provide="!net"/rc_provide="loopback net"/' /etc/rc.conf
-sed -i'.bak' '/getty/d' /etc/inittab
-sed -i'.bak' 's/mount -t tmpfs/# mount -t tmpfs/' /lib/rc/sh/init.sh
-sed -i'.bak' 's/hostname $opts/# hostname $opts/' /etc/init.d/hostname
-mkdir -p /run/openrc
-touch /run/openrc/softlevel
-rc-status
-rc-update add xrdp-sesman
-rc-update add xrdp
-rc-service xrdp-sesman start
-rc-service xrdp start
-```
-
-dockerfileでimageをbuildし、コンテナ起動とともにxrdpを起動するようにしたい場合にはENTRYPOINTを工夫してみてください。
-- Linux PAM 認証が不要な場合(sesmanの起動が不要)：
-   `ENTRYPOINT ["/usr/sbin/xrdp","-n"] ` と記述  
-    
-- Linux PAM 認証も使いたい場合：
-   `/sbin/rc-service xrdp-sesman start` 実行後、  
-    最後に `/usr/sbin/xrdp -n` を実行するshellスクリプトを作成・COPYし、  
-   `ENTRYPOINT ["/entriypoint.sh"] ` などと記述  
-
-
 /etc/xrdp/xrdp.ini を編集し、RDP/VNC 接続時の Linux PAM認証をする場合には
 接続許可ユーザを tsusers グループに所属させてください。
 ```
@@ -68,13 +42,15 @@ passwd <username>
 
 # 既知の不具合
 ##  日本語キーボードを使っているにも関わらず、ログイン後に接続先が英語キー配列になってしまう。
-   NeutrinoRDPモジュールの不具合が原因です。
-   ワークアラウンドとして、接続先Windows側のレジストリを変更し、KBDJPN.DLLの代わりに kbd106.dll を定義し、再起動してください。
+   NeutrinoRDPモジュールの不具合が原因と思われます。
+   ワークアラウンドとして、接続先Windows側のレジストリを変更し、KBDJPN.DLLの代わりに kbd106.dll を定義・再起動してください。
 
-レジストリエディタを使って以下を
-HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layouts\00000411
+### レジストリエディタで変更する方法
+レジストリエディタを使って以下のエントリーを探し、
+`HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layouts\00000411`
+`Layout File` キーの値を `KBDJPN.DLL` から `kbd106.DLL` に変更
 
-
+### コマンドプロンプトで変更する方法
 接続先Windowsの管理者権限でコマンドプロンプトを起動し、以下のコマンドを実行してください。
 ```
 # 変更前確認
@@ -91,11 +67,10 @@ shutdown /r
 ```
 
 ## 接続先にログイン後、マウスカーソルが黒い四角になってしまう
-  NeutrinoRDPモジュールの不具合が原因です。
+  NeutrinoRDPモジュールの不具合が原因と思われます。
    ワークアラウンドとして、接続先Windows側で影を無効にするようにマウスカーソルの設定を変更してください。
 ```
 	[設定]-[デバイス]-[マウス]-[その他のマウスオプション]-[ポインター]
 	「ポインターの影を有効にする」のチェックボックスを OFFにする
 ```
 
--
