@@ -8,7 +8,7 @@ X11RDP-rh-matic を使いつつもエラーとなったために無理やりbuil
 - 作成方法のメモ
 -- xrdp側
 CentOS6に対応した最終版のX11RDP-rh-matic v2.0.7を利用  
-xrdp.spec.in の内のconfigure オプションを変更  
+xrdp.spec.in の内のconfigure オプションを変更し、neutorinordp を有効化  
 他patchを追加  
 普通に X11RDP-RH-Matic.sh でbuildをすると、xrdp 0.9.13 では FUSEに関するエラーで止まってしまう。  
 C11 コンパイラで突破できるが Software Collections(scl) でGCC 4.9 に切替えて実行しても X11RDP-rh-matic が認識しない。
