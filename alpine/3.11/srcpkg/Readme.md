@@ -19,7 +19,7 @@ cd ~
 abuild-keygen -a -i -n -q
 
 # NeutrinoRDP のbuild
-wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/srcpkg/neutrinordp-1.0.1-0.src.tar.gz
+wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/srcpkg/neutrinordp-1.0.1-0.src.tar.gz
 tar zxvf ./neutrinordp-1.0.1-0.src.tar.gz
 cd NeutrinoRDP/
 sudo apk update
@@ -30,13 +30,12 @@ sudo apk add --update --no-cache ~/packages/builduser/x86_64/neutrinordp-dev-1.0
 
 # xrdp のbuild
 cd ~
-wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/srcpkg/xrdp-0.9.13-1.src.tar.gz
+wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/srcpkg/xrdp-0.9.13-1.src.tar.gz
 tar zxf ./xrdp-0.9.13-1.src.tar.gz
 cd xrdp/
 abuild -r
 # /home/builduser/package 以下に apk binary package が生成されます。
 ```
-
 
  通常のAlpine Linuxにインストールして起動する手順  
  ( 別ホストでapk add　するときには --allow-untrusted を付加してください。)
@@ -50,23 +49,6 @@ rc-update add xrdp
 rc-service xrdp-sesman start
 rc-service xrdp start
 ```
-
-Alpine Linux のdocker コンテナ内で起動するにはホストOS側の /sys/fs/cgroup をvolumeマウント`(-v /sys/fs/cgroup)`してコンテナ起動した上で以下の追加設定を行ってください。
-```
-sed -i 's/#rc_sys=""/rc_sys="lxc"/g' /etc/rc.conf
-sed -i 's/^#rc_provide="!net"/rc_provide="loopback net"/' /etc/rc.conf
-sed -i'.bak' '/getty/d' /etc/inittab
-sed -i'.bak' 's/mount -t tmpfs/# mount -t tmpfs/' /lib/rc/sh/init.sh
-sed -i'.bak' 's/hostname $opts/# hostname $opts/' /etc/init.d/hostname
-mkdir -p /run/openrc
-touch /run/openrc/softlevel
-rc-status
-rc-update add xrdp-sesman
-rc-update add xrdp
-rc-service xrdp-sesman start
-rc-service xrdp start
-```
-
 /etc/xrdp/xrdp.ini を編集し、RDP/VNC 接続時の Linux PAM認証をする場合には
 接続許可ユーザを tsusers グループに所属させてください。
 ```
