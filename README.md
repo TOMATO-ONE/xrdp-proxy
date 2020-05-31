@@ -10,7 +10,7 @@ RDP Proxy有効化に必要な NeutrinoRDP が FreeRDPと共存できないた�
 (FreeRDP 1.0.1 からforkしたNeutrinoRDPは、FreeRDP 1.0.2以降とlibファイル名が同じながらAPIが非互換です。)
   
   
-そこで、主にdockerでのコンテナ化を主眼として、Alpine Linuxのパッケージとdockerfileを作成しました。
+そこで、主にdockerでのコンテナ化を目的として、Alpine Linuxのパッケージとdockerfileを作成しました。
   
 Alpine Linux 3.11 用  apk / srcpkg パッケージ
 docker 用 dockerfile と image アーカイブを置いています。
