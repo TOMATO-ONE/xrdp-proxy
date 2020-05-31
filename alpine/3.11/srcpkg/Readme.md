@@ -34,8 +34,9 @@ wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/srcpkg/xrdp-
 tar zxf ./xrdp-0.9.13-1.src.tar.gz
 cd xrdp/
 abuild -r
-# /home/builduser/package 以下に apk binary package が生成されます。
 ```
+ /home/builduser/package 以下に apk binary package が生成されます。
+
 build後のクリーンアップ
 ```
 deluser --remove-home builduser
