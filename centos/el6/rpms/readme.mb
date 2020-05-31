@@ -5,14 +5,15 @@ X11RDP-rh-matic を使いつつもエラーとなったために無理やりbuil
 自分のために作ったのもので無保証です。  
   
   
--作成方法のメモ
+- 作成方法のメモ
 -- xrdp側
-X11RDP-rh-matic の v2.07を利用  
+CentOS6に対応した最終版のX11RDP-rh-matic v2.0.7を利用  
 xrdp.spec.in の内のconfigure オプションを変更  
 他patchを追加  
-X11RD-rh-matic でbuildをすると、FUSEに関するエラーとなる。  
+普通に X11RDP-RH-Matic.sh でbuildをすると、xrdp 0.9.13 では FUSEに関するエラーで止まってしまう。  
 C11 コンパイラで突破できるが Software Collections(scl) でGCC 4.9 に切替えて実行しても X11RDP-rh-matic が認識しない。
---noclear オプションでエラー後にもファイルが残るようにしたうえで、/tmp以下に残された xrdp.spec , xorgxrdp.spec を回収  
+--cleanup オプションは付けずにでエラー後にもソースファイルが残るようにして実行。  
+エラー停止後に/tmp以下に残された xrdp.spec , xorgxrdp.spec を回収  
 scl enable devtoolset-3 bash を実行後に rpmbuild -ba ./SPEC/xrdp.spec でrpmbを生成。
   
 -- NeutrinoRDP側
