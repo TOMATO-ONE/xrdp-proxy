@@ -1,25 +1,25 @@
-# Docker コンテナへのインストールと実行
+# Docker コンテナへのインストールと実行方法
 
 ## RDP/VNC Proxyとしての基本的な実行方法 
 
-### alpine 3.11 コンテナの起動
+### １）alpine 3.11 コンテナの起動
 ```
 docker run -itd -p 3389:3389 --name xrdp-proxy alpine:3.11 sh
 ```
-### コンテナへのapkインストール
+### ２）コンテナへのapkインストール
 ```
 docker exec -t xrdp-proxy wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/neutrinordp-libs-1.0.1-r0.apk -P /tmp/
 docker exec -it xrdp-proxy wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/xrdp-0.9.13-r1.apk -P /tmp/
 docker exec -it xrdp-proxy apk add --update --no-cache /tmp/neutrinordp-libs-1.0.1-r0.apk /tmp/xrdp-0.9.13-r1.apk --allow-untrusted 
 docker exec -it xrdp-proxy rm -i /tmp/neutrinordp-libs-1.0.1-r0.apk /tmp/xrdp-0.9.13-r1.apk
 ```
-### xrdp を実行
+### ３）xrdp を実行
 ```
 docker exec -itd xrdp-proxy /usr/sbin/xrdp -n
 ```
 Windowsの「リモートデスクトップ接続」`mstsc.exe `でホストOSのIPアドレスに接続するとxrdpのダイアログが表示されます。  
   
-### xrdp.iniを編集する場合
+### ４）xrdp.iniを編集する場合
 ```
 docker exec -it xrdp-proxy sh
 (コンテナ内)
@@ -34,11 +34,11 @@ Proxy先のOS側の認証に加えて xrdp側でLinux PAMを用いたユーザ�
 xrdp-sesmanだけが起動するコンテナを起動し、連携させるのがdocker本来のあり方ですが、  
 単一コンテナ内で二つのサービスを起動させるためには以下のようにします。  
   
-### alpine 3.11 コンテナの起動 (ホストOS側のcgroupをマウント)
+### １）alpine 3.11 コンテナの起動 (ホストOS側のcgroupをマウント)
 ```
 docker run -itd -p 3389:3389 -v /sys/fs/cgroup:/sys/fs/cgroup --name xrdp-proxy alpine:3.11 sh
 ```
-### apkインストール
+### ２）apkインストール
 ```
 docker exec -it xrdp-proxy apk add --update --no-cache openrc linux-pam
 docker exec -it xrdp-proxy wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/neutrinordp-libs-1.0.1-r0.apk -P /tmp/
@@ -47,7 +47,7 @@ docker exec -it xrdp-proxy wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/dev
 docker exec -it xrdp-proxy apk add --update --no-cache /tmp/neutrinordp-libs-1.0.1-r0.apk /tmp/xrdp-0.9.13-r1.apk /tmp/xrdp-openrc-0.9.13-r1.apk --allow-untrusted 
 docker exec -it xrdp-proxy rm -i /tmp/neutrinordp-libs-1.0.1-r0.apk /tmp/xrdp-0.9.13-r1.apk /tmp/xrdp-openrc-0.9.13-r1.apk
 ```
-### OpenRCを起動できるようにするための修正とxrdp-sesmanの起動登録
+### ３）OpenRCを起動できるようにするための修正とxrdp-sesmanの起動登録
 ```
 docker exec -it xrdp-proxy sed -i 's/#rc_sys=""/rc_sys="lxc"/g' /etc/rc.conf
 docker exec -it xrdp-proxy sed -i 's/^#rc_provide="!net"/rc_provide="loopback net"/' /etc/rc.conf
@@ -59,7 +59,7 @@ docker exec -it xrdp-proxy touch /run/openrc/softlevel
 docker exec -it xrdp-proxy rc-status
 docker exec -it xrdp-proxy rc-update add xrdp-sesman
 ```
-### xrdp.ini の編集  
+### ４）xrdp.ini の編集  
 ```
 docker exec -it xrdp-proxy sh
 ```
@@ -70,12 +70,12 @@ docker exec -it xrdp-proxy sh
 一部を固定値にしてダイアログに表示させないようにするか、`xrdp.ini` 117行目～のGUIパラメータを適宜編集してください。  
 編集後、`exit`でコンテナ内から抜けます。
 
-### xrdp-sesmanと xrdp の起動
+### ５）xrdp-sesmanと xrdp の起動
 ```
 docker exec -it xrdp-proxy rc-service xrdp-sesman start
 docker exec -itd xrdp-proxy /usr/sbin/xrdp -n
 ```
-### RDP接続を許可するグループ`tsusers`とユーザの作成
+### ６）RDP接続を許可するグループ`tsusers`とユーザの作成
 ```
 docker exec -it xrdp-proxy addgroup tsusers
 docker exec -it xrdp-proxy adduser -G tsusers -D -H -h /dev/null -s /sbin/nologin -g "xrdp user" <username>
@@ -83,8 +83,8 @@ docker exec -it xrdp-proxy passwd <username>
 ```
 グループ名をtsusersから変更するには `/etc/xrdp/sesman.ini` を編集してください。
 
-
-## ログファイルについての考慮
+## そのほかノウハウ
+### ・ログファイルについての考慮
 ログファイルはコンテナ内に蓄積されてしまいます。  
 以下のようにvolumeを指定してホストOS側のディレクトリにログを書き出すようにコンテナを起動します。
 ```
@@ -92,7 +92,7 @@ mkdir ./log/
 docker run -itd -p 3389:3389 -v /sys/fs/cgroup:/sys/fs/cgroup -v ${PWD}/log:/var/log --name xrdp-proxy alpine:3.11 sh
 ```
 
-### ホストOS側に置いたxrdp.ini を参照させたい  
+### ・ホストOS側に置いたxrdp.ini を参照させたい  
 コンテナ起動のたびにコンテナ内の`xrdp.ini`を修正するのが面倒な場合には、ホストOS側に`xrdp.ini`を置き、以下のようにして参照させてください。
 ```
 docker run -itd -p 3389:3389 -v /sys/fs/cgroup:/sys/fs/cgroup -v ${PWD}/log:/var/log -v ${PWD}/xrdp.ini:/etc/xrdp/xrdp.ini --name xrdp-proxy alpine:3.11 sh
