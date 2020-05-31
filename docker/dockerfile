@@ -8,9 +8,9 @@ RUN  wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/
      wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/neutrinordp-libs-1.0.1-r0.apk -P /tmp/ && \
      wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/neutrinordp-plugins-1.0.1-r0.apk -P /tmp/ && \
      apk add --update --no-cache \
-             ./neutrinordp-libs-1.0.1-r0.apk \
-             ./xrdp-0.9.13-r1.apk \
-             ./xrdp-openrc-0.9.13-r1.apk \
+             /tmp/neutrinordp-libs-1.0.1-r0.apk \
+             /tmp/xrdp-0.9.13-r1.apk \
+             /tmp/xrdp-openrc-0.9.13-r1.apk \
              openrc \
              linux-pam \
              shadow \
