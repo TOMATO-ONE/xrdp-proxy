@@ -1,1 +1,19 @@
-CentOS 6 rpmbuild
+CentOS 6.8上でX11RDP-rh-matic を利用して作成した NeutrinoRDP-any(RDP-Proxy)を有効にしたxrdp 0.9.13 と 前提となるNeutrinoRDPの RPMです。  
+NeutrinoRDPとファイル名が衝突するためにFreeRDPとは共存できません。  
+  
+X11RDP-rh-matic を使いつつもエラーとなったために無理やりbuildした、darty buildです。  
+自分のために作ったのもので無保証です。  
+  
+  
+-作成方法のメモ
+-- xrdp側
+X11RDP-rh-matic の v2.07を利用  
+xrdp.spec.in の内のconfigure オプションを変更  
+他patchを追加  
+X11RD-rh-matic でbuildをすると、FUSEに関するエラーとなる。  
+C11 コンパイラで突破できるが Software Collections(scl) でGCC 4.9 に切替えて実行しても X11RDP-rh-matic が認識しない。
+--noclear オプションでエラー後にもファイルが残るようにしたうえで、/tmp以下に残された xrdp.spec , xorgxrdp.spec を回収  
+scl enable devtoolset-3 bash を実行後に rpmbuild -ba ./SPEC/xrdp.spec でrpmbを生成。
+  
+-- NeutrinoRDP側
+オリジナルソースに含まれる`freerdp.spec`に手を入れて作成
