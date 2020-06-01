@@ -20,14 +20,14 @@ RUN  wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/
 # config
 RUN sed -i 's/#rc_sys=""/rc_sys="lxc"/g' /etc/rc.conf ; \
     sed -i 's/^#rc_provide="!net"/rc_provide="loopback net"/' /etc/rc.conf ; \
-    sed -i'.bak' '/getty/d' /etc/inittab ; \
-    sed -i'.bak' 's/mount -t tmpfs/# mount -t tmpfs/' /lib/rc/sh/init.sh ; \
-    sed -i'.bak' 's/hostname $opts/# hostname $opts/' /etc/init.d/hostname ;\
+    sed -i '/getty/d' /etc/inittab ; \
+    sed -i 's/mount -t tmpfs/# mount -t tmpfs/' /lib/rc/sh/init.sh ; \
+    sed -i 's/hostname $opts/# hostname $opts/' /etc/init.d/hostname ;\
     mkdir -p /run/openrc && \
     touch /run/openrc/softlevel && \
     rc-status && \
     rc-update add xrdp-sesman && \
-#    rc-update add xrdp && \
+#   rc-update add xrdp && \
     wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/docker/entrypoint.sh -O /root/entrypoint.sh && \
     chmod +x /root/entrypoint.sh
 
