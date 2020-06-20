@@ -26,7 +26,7 @@ sudo apk update
 abuild -r
 
 # xrdp に必要なneutrinordp-libs,neutrinordp-dev のインストール
-sudo apk add --update --no-cache ~/packages/builduser/x86_64/neutrinordp-dev-1.0.1-r0.apk ~/packages/builduser/x86_64/neutrinordp-libs-1.0.1-r0.apk
+sudo apk add --update --no-cache ~/packages/builduser/`uname -m`/neutrinordp-dev-1.0.1-r0.apk ~/packages/builduser/`uname -m`/neutrinordp-libs-1.0.1-r0.apk
 
 # xrdp のbuild
 cd ~
