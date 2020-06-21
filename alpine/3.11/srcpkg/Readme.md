@@ -10,7 +10,7 @@ NeutrinoRDPはFreeRDP 1.0.1からforkしたRDP client ですがファイル名�
 sed -i'.bak' -e "s/^#\(http:\/\/mirror.xtom.com.hk\/alpine\/v3.11\/community\)/\1/1" /etc/apk/repositories
 
 # build用ユーザの作成と準備
-apk add --update --no-cache alpine-sdk
+apk add --update --no-cache alpine-sdk sudo
 adduser -D builduser
 addgroup builduser abuild
 echo "ALL ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/builduser
