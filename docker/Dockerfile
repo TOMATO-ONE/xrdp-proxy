@@ -3,14 +3,14 @@ FROM alpine:3.11
 LABEL MAINTAINER TOMATO
 
 # package install
-RUN  wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/xrdp-0.9.13-r1.apk -P /tmp/ && \
-     wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/xrdp-openrc-0.9.13-r1.apk -P /tmp/ && \
+RUN  wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/xrdp-0.9.13.1-r0.apk -P /tmp/ && \
+     wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/xrdp-openrc-0.9.13.1-r0.apk -P /tmp/ && \
      wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/neutrinordp-libs-1.0.1-r0.apk -P /tmp/ && \
      wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/x86_64/neutrinordp-plugins-1.0.1-r0.apk -P /tmp/ && \
      apk add --update --no-cache \
              /tmp/neutrinordp-libs-1.0.1-r0.apk \
-             /tmp/xrdp-0.9.13-r1.apk \
-             /tmp/xrdp-openrc-0.9.13-r1.apk \
+             /tmp/xrdp-0.9.13.1-r0.apk \
+             /tmp/xrdp-openrc-0.9.13.1-r0.apk \
              openrc \
              linux-pam \
              shadow \
