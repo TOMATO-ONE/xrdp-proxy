@@ -30,8 +30,8 @@ sudo apk add --update --no-cache ~/packages/builduser/`uname -m`/neutrinordp-dev
 
 # xrdp のbuild
 cd ~
-wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/srcpkg/xrdp-0.9.13-1.src.tar.gz
-tar zxf ./xrdp-0.9.13-1.src.tar.gz
+wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.11/srcpkg/xrdp-0.9.13.1-0.src.tar.gz
+tar zxf ./xrdp-0.9.13.1-0.src.tar.gz
 cd xrdp/
 abuild -r
 ```
