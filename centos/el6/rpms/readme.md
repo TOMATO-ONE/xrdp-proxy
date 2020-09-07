@@ -1,4 +1,4 @@
-CentOS 6.8上でX11RDP-rh-matic を利用して作成した NeutrinoRDP-any(RDP-Proxy)を有効にしたxrdp 0.9.13.1 と 前提となるNeutrinoRDPの RPMです。  
+CentOS 6.8上でX11RDP-rh-matic を利用して作成した NeutrinoRDP-any(RDP-Proxy)を有効にしたxrdp と 前提となるNeutrinoRDPの RPMです。  
 NeutrinoRDPとファイル名が衝突するためにFreeRDPとは共存できません。  
   
 X11RDP-rh-matic を使いつつもエラーとなったために無理やりbuildした、darty buildです。  
