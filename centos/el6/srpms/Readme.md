@@ -1,4 +1,4 @@
-CentOS 6.8上でX11RDP-rh-matic を利用して作成した xrdp 0.9.13 と NeutrinoRDPの SRPMです。  
+CentOS 6.8上でX11RDP-rh-matic を利用して作成した xrdp 0.9.15 と NeutrinoRDPの SRPMです。  
 自分のために作ったので無保証です。
 
 build方法
@@ -8,7 +8,7 @@ buildに必要packageは以下を参照
 https://github.com/neutrinolabs/NeutrinoRDP/wiki/Compilation  
 
 rpm -Uvh NeutrinoRDP-devel-1.el6.src.rpm  
-rpmbuild -ba --clean ~/rpmbuild/SPECS/neutrinordp.spec  
+QA_RPATHS=0x0001 rpmbuild -ba --clean rpmbuild/SPECS/neutrinordp.spec  
 
 2.xrdp を build  
 buildに必要packageは以下を参照  
