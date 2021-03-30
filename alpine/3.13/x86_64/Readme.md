@@ -1,5 +1,5 @@
 # xrdp-proxy
-NeutrinoRDP-any(RDP Proxy)モジュールを有効にした、Alpine Linux 3.13 用 xrdp  0.9.13 binary packageです。  
+NeutrinoRDP-any(RDP Proxy)モジュールを有効にした、Alpine Linux 3.13 用 xrdp binary packageです。  
 xrdpはAlpine Linuxに標準のxrdp から configure optionを変更して生成しています。  
 NeutrinoRDPは FreeRDPのABUILDファイルを流用して生成しています。
 
