@@ -1,7 +1,7 @@
 # xrdp-proxy
 xrdp with NeutrinoRDP proxy module
 
-NeutrinoRDP-any モジュールを有効にした、xrdp  です。  
+RDP Proxy (NeutrinoRDP-any)モジュールを有効にした、xrdp  です。  
 Apache GUACAMOLE のように Microsoft Windows の RDP プロトコルのProxy として動作します。  
   
 xrdpはRDPプロトコルでLinux GUIに接続するソリューションとして多くのディストリビューションで採用されています。  
