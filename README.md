@@ -1,7 +1,7 @@
 # xrdp-proxy
-xrdp 0.9.14 with NeutrinoRDP proxy module
+xrdp with NeutrinoRDP proxy module
 
-NeutrinoRDP-any モジュールを有効にした、xrdp 0.9.14 です。  
+NeutrinoRDP-any モジュールを有効にした、xrdp  です。  
 Apache GUACAMOLE のように Microsoft Windows の RDP プロトコルのProxy として動作します。  
   
 xrdpはRDPプロトコルでLinux GUIに接続するソリューションとして多くのディストリビューションで採用されています。  
@@ -12,7 +12,7 @@ RDP Proxy有効化に必要な NeutrinoRDP が FreeRDPと共存できないた�
   
 そこで、主にdockerでのコンテナ化を目的として、Alpine Linuxのパッケージとdockerfileを作成しました。
   
-Alpine Linux 3.11 用  apk / srcpkg パッケージ  と docker 用 dockerfile と image アーカイブを置いています。  
+Alpine Linux 3.XX 用  apk / srcpkg パッケージ  と docker 用 dockerfile と image アーカイブを置いています。  
 docker imageは docker hub でも 公開しています。  
 https://hub.docker.com/r/junkertomato/xrdp-proxy
   
