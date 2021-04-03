@@ -1,0 +1,82 @@
+# Contributor: Dummy user <your@email.address>
+# Maintainer: Dummy user <your@email.address>
+pkgname="neutrinordp"
+_pkgname="NeutrinoRDP"
+pkgver="1.0.1"
+_pkgver="devel"
+pkgrel=1
+pkgdesc="NeutrinoRDP fork of FreeRDP 1.0.1"
+url="https://github.com/neutrinolabs/NeutrinoRDP"
+arch="all"
+license="Apache-2.0"
+replaces="freerdp"
+options="!check"
+makedepends="cmake gcc libc-dev automake autoconf make zlib-dev openssl-dev libxcursor-dev 
+         cups-dev alsa-lib-dev ffmpeg-dev libxkbfile-dev libxinerama-dev libxv-dev
+         libxdamage-dev libjpeg-turbo-dev libxi-dev cmake bsd-compat-headers
+         gst-plugins-base-dev gsm-dev linux-headers libusb-dev libxtst-dev libxrandr-dev"
+#subpackages="$pkgname-doc $pkgname-dev $pkgname-plugins $pkgname-libs"
+subpackages="$pkgname-dev $pkgname-plugins $pkgname-libs"
+_giturl="https://github.com/neutrinolabs/NeutrinoRDP.git"
+_gitbranch="devel"
+_githash="f7832d6ce8f12f4b999a2a4edc6cc72373bc5168"
+source="$pkgname-$_pkgver.tar.gz::https://github.com/neutrinolabs/NeutrinoRDP/archive/devel.tar.gz
+	xcuroroff.patch"
+
+builddir="$srcdir"/$_pkgname-$_pkgver
+
+prepare() {
+  default_prepare
+}
+
+
+build() {
+	local _SSE2_opt=""
+	case "$CARCH" in
+        	aarch64*|arm*|ppc64le|x86|s390x) _SSE2_opt="-DWITH_SSE2=OFF" ;;
+        	x86_64)                          _SSE2_opt="-DWITH_SSE2=ON" ;;
+        	*)                               msg "Unable to determine architecture from (CARCH=$CARCH)" ; return 1 ;;
+	esac
+
+	export CFLAGS="$CFLAGS -D_BSD_SOURCE"
+	cmake -DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_INSTALL_LIBDIR=lib \
+               -DWITH_ALSA=ON \
+               -DWITH_CUPS=ON \
+               -DWITH_DIRECTFB=OFF \
+               -DWITH_FFMPEG=OFF \
+               -DWITH_JPEG=ON \
+               -DWITH_PCSC=OFF \
+               -DWITH_SERVER=OFF \
+               -DWITH_X11=ON \
+               -DWITH_XCURSOR=ON \
+               -DWITH_XEXT=ON \
+               -DWITH_XKBFILE=ON \
+               -DWITH_XINERAMA=ON \
+               -DWITH_XV=ON \
+               -DWITH_NEON=OFF \
+               ${_SSE2_opt}
+	make
+}
+
+package() {
+	make DESTDIR="$pkgdir" install
+}
+
+libs() {
+	pkgdesc="NeutrinoRDP client - Libraries"
+	replaces="libfreerdp"
+	mkdir -p "$subpkgdir"/usr
+	mv "$pkgdir"/usr/lib "$subpkgdir"/usr/
+}
+
+plugins() {
+	pkgdesc="NeutrinoRDP client - Plugins"
+	replaces="libfreerdp"
+	mkdir -p "$subpkgdir"/usr/lib
+	mv "$pkgdir"/usr/lib/freerdp "$subpkgdir"/usr/lib/
+}
+
+sha512sums="8bb58411064420e48544746b4fa7608e800753ccabc87cca711cfcf8aaf9e78eccc7775f55df3b15198f1c243d1c4343fd631c515e5c02d49439860dd4a7b5de  neutrinordp-devel.tar.gz
+5b916f5983370bf3ae15f4864f34debf3e263775bd0f24a60d887afc10890c8d919e37d5c748e03f89e31a27984412df9b9a03e260c582209c1b7781396fee64  xcuroroff.patch"
