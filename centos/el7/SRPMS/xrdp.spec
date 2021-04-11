@@ -13,7 +13,7 @@ Summary:   Open source remote desktop protocol (RDP) server
 Name:      xrdp
 Epoch:     1
 Version:   0.9.15
-Release:   3a%{?dist}
+Release:   3%{?dist}
 License:   ASL 2.0 and GPLv2+ and MIT
 URL:       http://www.xrdp.org/
 Source0:   https://github.com/neutrinolabs/xrdp/releases/download/v%{version}/xrdp-%{version}.tar.gz
@@ -24,6 +24,7 @@ Source4:   openssl.conf
 Source5:   README.Fedora
 Source6:   xrdp.te
 Source7:   xrdp-polkit-1.rules
+Source8:   xrdp.ini.RDP-Proxy_enabled
 Patch0:    xrdp-0.9.9-sesman.patch
 Patch1:    xrdp-0.9.14-xrdp-ini.patch
 Patch2:    xrdp-0.9.4-service.patch
@@ -108,6 +109,9 @@ This package contains RDP Proxy module for xrdp (neutrinordp-any)
 %{__mkdir} SELinux
 %{__cp} -p %{SOURCE6} SELinux
 
+# RDP-Proxy ini 
+%{__cp} %{SOURCE8} xrdp
+
 # create 'bash -l' based startwm, to pick up PATH etc.
 echo '#!/bin/bash -l
 . %{_libexecdir}/xrdp/startwm.sh' > sesman/startwm-bash.sh
@@ -153,6 +157,9 @@ cd -
 
 #install xrdp.rules /usr/share/polkit-1/rules.d
 %{__install} -Dp -m 644 %{SOURCE7} %{buildroot}%{_datadir}/polkit-1/rules.d/xrdp.rules
+
+#install xrdp.ini.RDP-Proxy_enabled
+%{__install} -Dp -m 644 %{SOURCE8} %{buildroot}%{_sysconfdir}/xrdp/xrdp.ini.RDP-Proxy_enabled
 
 # SELinux policy module
 for selinuxvariant in %{selinux_variants}
@@ -270,7 +277,8 @@ fi
 %{_unitdir}/xrdp-sesman.service
 %{_unitdir}/xrdp.service
 %exclude %{_includedir}/painter.h
-%exclude %{_libdir}/libpainter.*
+#%exclude %{_libdir}/libpainter.*
+%{_libdir}/libpainter.so
 %exclude %{_libdir}/pkgconfig/libpainter.pc
 %exclude %{_libdir}/*.a
 %exclude %{_libdir}/*.la
@@ -293,9 +301,12 @@ fi
 
 %files neutrinordp
 %{_libdir}/xrdp/libxrdpneutrinordp.so
-
+%config %{_sysconfdir}/xrdp/xrdp.ini.RDP-Proxy_enabled
 
 %changelog
+* Mon Apr 12 2021 TOMATO <junker.tomato@gmail.com> - 1:0.9.15-3
+- add xrdp-RDPproxy
+
 * Sat Jan  2 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.15-3
 - Remove setpriv patch and adjust SELinux policy to match
 
