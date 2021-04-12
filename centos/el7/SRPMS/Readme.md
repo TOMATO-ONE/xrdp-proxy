@@ -1,4 +1,5 @@
-#BUILD方法
+# rpmbuild方法
+インストール直後の最小インストール構成のCentOS7から以下のコマンドでrpmパッケージを作成できます。
 
 ```
 yum update -y
