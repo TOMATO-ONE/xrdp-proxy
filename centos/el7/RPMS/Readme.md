@@ -1,4 +1,4 @@
-#CentOS7用 xrdp
+# CentOS7用 xrdp
 
 - xrdp-0.9.xx-x.el7.x86_64.rpm             Proxyモード専用時には不要なXvnc や Desktop 環境がインストールされないように依存関係を削除した xrdp  
 - xrdp-neutrinordp-0.9.xx-x.x86_64.rpm     RDP-Proxy module ( neutrinordp-any )  
@@ -7,9 +7,9 @@
 
    
     
-#主な利用シーン   
+# 主な利用シーン   
  - CLIのみのCentOS7にRDP-Proxyを実装する場合   
-  　GUI関連の依存関係を外しているのでxvncやX-Window 関連がインストールされません
+  　GUI関連の依存関係を外しているのでvncやX-Window 関連がインストールされません
 ```
    yum localinstall xrdp-0.9.xx-x.el7.x86_64.rpm　xrdp-neutrinordp-0.9.xx-x.x86_64.rpm NeutrinoRDP-libs-devel-x.el7.x86_64.rpm
 ```
