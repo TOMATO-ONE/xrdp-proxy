@@ -9,10 +9,12 @@
     
 #主な利用シーン   
  - CLIのみのCentOS7にRDP-Proxyを実装する場合   
+  　GUI関連の依存関係を外しているのでxvncやX-Window 関連がインストールされません
 ```
    yum localinstall xrdp-0.9.xx-x.el7.x86_64.rpm　xrdp-neutrinordp-0.9.xx-x.x86_64.rpm NeutrinoRDP-libs-devel-x.el7.x86_64.rpm
 ```
  - 既存EPELのxrdpをインストール済みのLinux Desktop に RDP-Proxyを追加する場合   
+    EPELのxrdpにadd onとしてインストールできます。 
 ```
     yum localinstall xrdp-neutrinordp-0.9.xx-x.x86_64.rpm NeutrinoRDP-libs-devel-x.el7.x86_64.rpm
 ```
