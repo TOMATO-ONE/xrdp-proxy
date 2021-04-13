@@ -5,11 +5,10 @@ RDP Proxy (NeutrinoRDP-any)モジュールを有効にした、xrdp  です。
 Apache GUACAMOLE のように Microsoft Windows の RDP プロトコルのProxy として動作します。  
   
 xrdpはRDPプロトコルでLinux GUIに接続するソリューションとして多くのディストリビューションで採用されています。  
-xrdpはRDP Proxyとして動作する NeutrinoRDP-any モードを持っていますが、ほとんどのディストリビューションでは利用できません。  
-xrdp.ini の [NeutrinoRDP-Any] セクションを有効にしても、動作に必要な libxrdpneutrinordp.so が同梱されていないためです。   
-   
-FreeRDP 1.0.1 からforkしたNeutrinoRDPは、libファイル名が同じながらAPIが非互換なため、FreeRDP 1.0.2以降と共存できないこと、   
-また、xrdpは主にWindowsクライアントからLinux Desktopへの GUIログインを目的として使われることが多く、RDP Proxyの使用頻度が少ないことが理由と思われます。   
+xrdpはRDP Proxyとして動作する NeutrinoRDP-any モードを持っていますが、xrdp.ini の [NeutrinoRDP-Any] セクションを有効にしてもほとんどのディストリビューションでは利用できません。  
+動作に必要な libxrdpneutrinordp.so が同梱されていないためです。   
+libxrdpneutrinordp.so はFreeRDP 1.0.1 からforkしたNeutrinoRDPを利用しますが、libファイル名が同じながらAPIが非互換なため、FreeRDP 1.0.2以降と共存できないこと、   
+xrdpは主にWindowsクライアントからLinux Desktopへの GUIログインを目的として使われることが多く、RDP Proxyの使用頻度が少ないことが理由と思われます。   
    
 ここにあるのは libxrdpneutrinordp.so を同梱しRDP Proxy として動作するようにした xrdp で、以下のものを置いています。  
    
