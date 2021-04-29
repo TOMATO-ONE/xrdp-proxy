@@ -1,0 +1,13 @@
+--- a/neutrinordp/xrdp-neutrinordp.c.orig
++++ b/neutrinordp/xrdp-neutrinordp.c
+@@ -502,6 +502,10 @@
+     {
+         settings->nla_security = g_text2bool(value);
+     }
++    else if (g_strcmp(name, "pampassword") == 0)
++    {
++       LLOGLN(0, ("lxrdp_set_param: unknown name [%s] value [%s]", name, "*****" ));    
++    }
+     else
+     {
+         LLOGLN(0, ("lxrdp_set_param: unknown name [%s] value [%s]", name, value));
