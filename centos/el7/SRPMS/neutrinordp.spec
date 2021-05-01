@@ -5,7 +5,7 @@
 Summary: NeutrinoRDP RDP Client fork from FreeRDP 1.0.1
 Name: NeutrinoRDP
 Version: devel
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: Apache License 2.0
 Group: Applications/Communications
 URL: https://github.com/neutrinolabs/NeutrinoRDP
