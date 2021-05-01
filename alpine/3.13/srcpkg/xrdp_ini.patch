@@ -1,6 +1,6 @@
---- a/xrdp/xrdp.ini
-+++ b/xrdp/xrdp.ini
-@@ -193,48 +193,70 @@
+--- xrdp-0.9.16/xrdp/xrdp.ini.orig
++++ xrdp-0.9.16/xrdp/xrdp.ini
+@@ -190,22 +190,22 @@
  ; Some session types such as Xorg, X11rdp and Xvnc start a display server.
  ; Startup command-line parameters for the display server are configured
  ; in sesman.ini. See and configure also sesman.ini.
@@ -20,7 +20,7 @@
 +#ip=127.0.0.1
 +#port=-1
 +#code=20
- 
+
 -[Xvnc]
 -name=Xvnc
 -lib=libvnc.so
@@ -38,46 +38,33 @@
  #xserverbpp=24
  #delay_ms=2000
  ; Disable requested encodings to support buggy VNC servers
- ; (1 = ExtendedDesktopSize)
- #disabled_encodings_mask=0
- 
-+[RDP-Porxy]
-+name=RDP-Proxy
+@@ -216,6 +216,21 @@
+ ; display number of the session
+ #chansrvport=DISPLAY(0)
+
++[neutrinordp-any]
++name=neutrinordp-any
 +lib=libxrdpneutrinordp.so
 +ip=ask
 +port=ask3389
 +username=ask
 +password=ask
- 
--[vnc-any]
--name=vnc-any
-+# [RDP-Proxy-PAM]
-+# name=RDP-Proxy with PAM auth
-+# lib=libxrdpneutrinordp.so
-+# ip=ask192.168.0.101
-+# port=3389
-+# username=askWin-user
-+# password=askWin-password
-+# pamusername=askLinuxPAM-User
-+# pampassword=askLinuxPAM-password
-+# pamsessionmng=127.0.0.1
-+# delay_ms=2000
++#pamusername=asksame
++#pampassword=asksame
++#pamsessionmng=127.0.0.1
++#delay_ms=2000
++; Currently NeutrinoRDP doesn't support dynamic resizing. Uncomment
++; this line if you're using a client which does.
++#enable_dynamic_resizing=false
 +
-+; Note: PAM user should be members of the "tsusers" group.
-+;       See also sesman.ini
-+
-+[VNC-Proxy]
-+name=VNC-Proxy
+ [vnc-any]
+ name=vnc-any
  lib=libvnc.so
- ip=ask
- port=ask5900
- username=na
- password=ask
--#pamusername=asksame
--#pampassword=asksame
--#pamsessionmng=127.0.0.1
--#delay_ms=2000
- 
+@@ -227,17 +242,6 @@
+ #pampassword=asksame
+ #pamsessionmng=127.0.0.1
+ #delay_ms=2000
+-
 -[neutrinordp-any]
 -name=neutrinordp-any
 -lib=libxrdpneutrinordp.so
@@ -85,17 +72,10 @@
 -port=ask3389
 -username=ask
 -password=ask
-+# [VNC-Proxy-PAM]
-+# name=VNC-Proxy with PAM auth
-+# lib=libvnc.so
-+# ip=ask192.168.0.101
-+# port=ask5900
-+# username=na
-+# password=askVNC-password
-+# pamusername=askLinuxPAM-User
-+# pampassword=askLinuxPAM-password
-+# pamsessionmng=127.0.0.1
-+# delay_ms=2000
- 
+-; Currently NeutrinoRDP doesn't support dynamic resizing. Uncomment
+-; this line if you're using a client which does.
+-#enable_dynamic_resizing=false
+
  ; You can override the common channel settings for each session type
  #channel.rdpdr=true
+

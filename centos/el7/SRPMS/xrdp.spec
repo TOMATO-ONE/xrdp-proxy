@@ -12,8 +12,8 @@
 Summary:   Open source remote desktop protocol (RDP) server
 Name:      xrdp
 Epoch:     1
-Version:   0.9.15
-Release:   3%{?dist}
+Version:   0.9.16
+Release:   0%{?dist}
 License:   ASL 2.0 and GPLv2+ and MIT
 URL:       http://www.xrdp.org/
 Source0:   https://github.com/neutrinolabs/xrdp/releases/download/v%{version}/xrdp-%{version}.tar.gz
@@ -26,7 +26,7 @@ Source6:   xrdp.te
 Source7:   xrdp-polkit-1.rules
 Source8:   xrdp.ini.RDP-Proxy_enabled
 Patch0:    xrdp-0.9.9-sesman.patch
-Patch1:    xrdp-0.9.14-xrdp-ini.patch
+# Patch1:    xrdp-0.9.14-xrdp-ini.patch
 Patch2:    xrdp-0.9.4-service.patch
 Patch3:    xrdp-0.9.10-scripts-libexec.patch
 Patch4:    xrdp-0.9.6-script-interpreter.patch
@@ -304,6 +304,10 @@ fi
 %config %{_sysconfdir}/xrdp/xrdp.ini.RDP-Proxy_enabled
 
 %changelog
+* Sat May 1 2021 TOMATO <junker.tomato@gmail.com> - 1:0.9.16-0
+- bump up to 0.9.15
+- remove xrdp.ini patch
+
 * Mon Apr 12 2021 TOMATO <junker.tomato@gmail.com> - 1:0.9.15-3
 - add xrdp-RDPproxy
 

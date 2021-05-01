@@ -1,5 +1,5 @@
 ARG ALPINE_VERSION="3.13"
-ARG XRDP_VERSION="0.9.15"
+ARG XRDP_VERSION="0.9.16"
 ARG XRDP_PKG_RELEASE="0"
 ARG XRDP_GITHASH="f24b7b7"
 ARG NEUTRINORDP_VERSION="1.0.1"
@@ -172,6 +172,7 @@ RUN { \
      echo '	xrdp.initd'; \
      echo '	dynamic-link.patch'; \
      echo '	xrdp_ini.patch'; \
+     echo '     xrdp-neutrinordp.c.patch'; \
      echo '	"'; \
      echo ''; \
      echo ''; \
@@ -222,6 +223,7 @@ RUN { \
 RUN \
     wget https://raw.githubusercontent.com/TOMATO-ONE/xrdp-proxy/devel/alpine/3.13/srcpkg/dynamic-link.patch \
 &&  wget https://raw.githubusercontent.com/TOMATO-ONE/xrdp-proxy/devel/alpine/3.13/srcpkg/xrdp_ini.patch \
+&&  wget https://raw.githubusercontent.com/TOMATO-ONE/xrdp-proxy/devel/alpine/3.13/srcpkg/xrdp-neutrinordp.c.patch \
 &&  abuild-keygen -a -i -n -q \
 &&  abuild checksum \
 &&  abuild -r \

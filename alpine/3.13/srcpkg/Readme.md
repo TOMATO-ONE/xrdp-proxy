@@ -19,19 +19,19 @@ cd ~
 abuild-keygen -a -i -n -q
 
 # NeutrinoRDP のbuild
-wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.13/srcpkg/neutrinordp-1.0.1-1.src.tar.gz
-tar zxvf ./neutrinordp-1.0.1-1.src.tar.gz
+wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.13/srcpkg/neutrinordp-1.0.1-0.src.tar.gz
+tar zxvf ./neutrinordp-1.0.1-0.src.tar.gz
 cd NeutrinoRDP/
 sudo apk update
 abuild -r
 
 # xrdp に必要なneutrinordp-libs,neutrinordp-dev のインストール
-sudo apk add --update --no-cache ~/packages/src/`uname -m`/neutrinordp-dev-1.0.1-r1.apk ~/packages/src/`uname -m`/neutrinordp-libs-1.0.1-r1.apk
+sudo apk add --update --no-cache ~/packages/src/`uname -m`/neutrinordp-dev-1.0.1-r1.apk ~/packages/src/`uname -m`/neutrinordp-libs-1.0.1-r0.apk
 
 # xrdp のbuild
 cd ~ 
-wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.13/srcpkg/xrdp-0.9.15-0.src.tar.gz
-tar zxf ./xrdp-0.9.15-0.src.tar.gz
+wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/alpine/3.13/srcpkg/xrdp-0.9.16-0.src.tar.gz
+tar zxf ./xrdp-0.9.16-0.src.tar.gz
 cd xrdp/
 abuild -r
 ```
