@@ -1,5 +1,5 @@
---- a/xrdp/xrdp.ini
-+++ b/xrdp/xrdp.ini
+--- a/xrdp/xrdp.ini.in
++++ b/xrdp/xrdp.ini.in
 @@ -193,48 +193,70 @@
  ; Some session types such as Xorg, X11rdp and Xvnc start a display server.
  ; Startup command-line parameters for the display server are configured
