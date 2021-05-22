@@ -1,0 +1,133 @@
+diff -ruN xrdp-backup/xrdp/neutrinordp/xrdp-neutrinordp.h xrdp/neutrinordp/xrdp-neutrinordp.h
+--- xrdp-backup/xrdp/neutrinordp/xrdp-neutrinordp.h	2021-05-12 22:08:20.284505628 +0900
++++ xrdp/neutrinordp/xrdp-neutrinordp.h	2021-05-12 22:28:07.539205085 +0900
+@@ -216,5 +216,5 @@
+     struct bitmap_item bitmap_cache[4][4096];
+     struct brush_item brush_cache[64];
+     struct pointer_item pointer_cache[32];
+-
++    char pamusername[255];
+ };
+diff -ruN xrdp-backup/xrdp/neutrinordp/xrdp-neutrinordp.c xrdp/neutrinordp/xrdp-neutrinordp.c
+--- xrdp-backup/xrdp/neutrinordp/xrdp-neutrinordp.c	2021-05-12 22:08:20.284505628 +0900
++++ xrdp/neutrinordp/xrdp-neutrinordp.c	2021-05-12 22:28:07.539205085 +0900
+@@ -182,18 +182,30 @@
+         }
+ 
+ #endif
+-        LOG(LOG_LEVEL_ERROR, "freerdp_connect Failed to "
+-            "destination :%s:%d",
++        LOG(LOG_LEVEL_ERROR, "NeutrinoRDP proxy connection: status [Failed]," 
++            " RDP client [%s:%s], RDP server [%s:%d], RDP server username [%s],"
++            " xrdp pamusername [%s], xrdp process id [%d]",
++            mod->client_info.client_addr,
++            mod->client_info.client_port,
+             mod->inst->settings->hostname,
+-            mod->inst->settings->port);
++            mod->inst->settings->port,
++            mod->inst->settings->username,
++            mod->pamusername,
++            g_getpid());
+         return 1;
+     }
+     else
+     {
+-        LOG(LOG_LEVEL_INFO, "freerdp_connect returned Success to "
+-            "destination :%s:%d",
++        LOG(LOG_LEVEL_INFO, "NeutrinoRDP proxy connection: status [Success],"
++            " RDP client [%s:%s], RDP server [%s:%d], RDP server username [%s],"
++            " xrdp pamusername [%s], xrdp process id [%d]",
++            mod->client_info.client_addr,
++            mod->client_info.client_port,
+             mod->inst->settings->hostname,
+-            mod->inst->settings->port);
++            mod->inst->settings->port,
++            mod->inst->settings->username,
++            mod->pamusername,
++            g_getpid());
+     }
+ 
+     return 0;
+@@ -433,6 +445,16 @@
+     }
+ 
+     LOG_DEVEL(LOG_LEVEL_DEBUG, "lxrdp_end:");
++    LOG(LOG_LEVEL_INFO, "NeutrinoRDP proxy connection: status [Disconnect],"
++        " RDP client [%s:%s], RDP server [%s:%d], RDP server username [%s],"
++        " xrdp pamusername [%s], xrdp process id [%d]",
++        mod->client_info.client_addr,
++        mod->client_info.client_port,
++        mod->inst->settings->hostname,
++        mod->inst->settings->port,
++        mod->inst->settings->username,
++        mod->pamusername,
++        g_getpid());
+     return 0;
+ }
+ 
+@@ -504,9 +526,12 @@
+     {
+         settings->desktop_resize = g_text2bool(value);
+     }
+-    else if (g_strcmp(name, "pamusername") == 0 ||
+-             g_strcmp(name, "pampassword") == 0 ||
+-             g_strcmp(name, "pammsessionmng") == 0)
++    else if (g_strcmp(name, "pamusername") == 0)
++    {
++        g_strncpy(mod->pamusername, value, 255);
++    }
++    else if (g_strcmp(name, "pampassword") == 0 ||
++             g_strcmp(name, "pamsessionmng") == 0)
+     {
+         /* Valid (but unused) parameters not logged */
+     }
+diff -ruN xrdp-backup/xrdp/xrdp/xrdp.ini xrdp/xrdp/xrdp.ini
+--- xrdp-backup/xrdp/xrdp/xrdp.ini	2021-05-12 22:08:20.300505983 +0900
++++ xrdp/xrdp/xrdp.ini	2021-05-12 22:28:07.540205107 +0900
+@@ -111,6 +111,12 @@
+ ls_top_window_bg_color=009cb5
+ 
+ ; width and height of login screen
++;
++; The default height allows for about 5 fields to be comfortably displayed
++; above the buttons at the bottom. To display more fields, make <ls_height>
++; larger, and also increase <ls_btn_ok_y_pos> and <ls_btn_cancel_y_pos>
++; below
++;
+ ls_width=350
+ ls_height=430
+ 
+@@ -216,6 +222,9 @@
+ ; display number of the session
+ #chansrvport=DISPLAY(0)
+ 
++; Generic VNC Proxy
++; Tailor this to specific hosts and VNC instances by specifying an ip
++; and port and setting a suitable name.
+ [vnc-any]
+ name=vnc-any
+ lib=libvnc.@lib_extension@
+@@ -228,13 +237,23 @@
+ #pamsessionmng=127.0.0.1
+ #delay_ms=2000
+ 
++; Generic RDP proxy using NeutrinoRDP
++; Tailor this to specific hosts by specifying an ip and port and setting
++; a suitable name.
+ [neutrinordp-any]
+ name=neutrinordp-any
++; To use this section, you should build xrdp with configure option
++; --enable-neutrinordp.
+ lib=libxrdpneutrinordp.@lib_extension@
+ ip=ask
+ port=ask3389
+ username=ask
+ password=ask
++; Uncomment the following lines to enable PAM authentication for proxy
++; connections.
++#pamusername=ask
++#pampassword=ask
++#pamsessionmng=127.0.0.1
+ ; Currently NeutrinoRDP doesn't support dynamic resizing. Uncomment
+ ; this line if you're using a client which does.
+ #enable_dynamic_resizing=false

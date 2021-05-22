@@ -1,0 +1,9 @@
+diff -ruN xrdp-0.9.6-v/sesman/startwm.sh xrdp-0.9.6/sesman/startwm.sh
+--- xrdp-0.9.6-v/sesman/startwm.sh	2018-03-26 15:29:21.000000000 +1100
++++ xrdp-0.9.6/sesman/startwm.sh	2018-04-23 14:48:12.320386375 +1000
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env bash
++#!/bin/bash
+ #
+ # This script is an example. You might need to edit this script
+ # depending on your distro if it doesn't work for you.
