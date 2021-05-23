@@ -1,8 +1,9 @@
 # Contributor: Alan Lacerda <alacerda@alpinelinux.org>
 # Maintainer: Alan Lacerda <alacerda@alpinelinux.org>
 pkgname=xrdp
-pkgver=0.9.15
-pkgrel=$XRDP_PKG_RELEASE
+pkgver=0.9.16
+#pkgrel=$XRDP_PKG_RELEASE
+pkgrel=1
 pkgdesc="Open source RDP server with RDP/VNC proxy"
 url="https://www.xrdp.org/"
 arch="all"
@@ -15,6 +16,7 @@ subpackages="$pkgname-doc $pkgname-dev $pkgname-openrc"
 source="https://github.com/neutrinolabs/xrdp/releases/download/v$pkgver/xrdp-$pkgver.tar.gz
 	xrdp.initd
 	dynamic-link.patch
+        xrdp-0.9.16-neutrinordp.patch
 	xrdp_ini.patch
 	"
 
@@ -48,7 +50,8 @@ package() {
 	ln -s $pkgname $pkgdir/etc/init.d/$pkgname-sesman
 }
 
-sha512sums="5adc9f1ed2046d0c8c96e3ac4701b2e12b303fcb4ba22708e78398d4be32220b91a38d9425ddfebfad76045e14ed2d7886ed2b644971678101349b0ea0c479a6  xrdp-0.9.15.tar.gz
+sha512sums="8088b0ffc23510591e30f345d4bcd0132e4dbaf162468b7fc99c6c0d642a55cecbaf429eec555d351cba0978c2021e0e1ec7faef109971848692cbd5dde49a0f  xrdp-0.9.16.tar.gz
 22b44398f4014ee67831051d1a1a859c6f4a601d75a03b33142ce7ea1e3f00082134337efb7da69e964f4a369d2b22114973221be2131f384f9459cc8e82fc13  xrdp.initd
 c20de35c4623bcdeae2ba8a740f965b5f320c506ff9a7b9444ec0c8300af518fd3a84b8c28f6e775b7bab73bdac7433be9261d133fc767d953ac54cb2d3b0afd  dynamic-link.patch
-8ae4c235d021dab0ca817c6398c29aabb73962a2d39c949a848870017242864e347ab4b262555e4608d8cc9c3c43deaf0f6e54b1f171b6c7995a0766a313a6ce  xrdp_ini.patch"
+dfbf0abfe1560c6dbef9c90ceb491ac7a8a361b0a29d8e46f7a63c5baea0026a1599dfac64c5e15a84fce589cd3b3d5e29e8e6eecf6a51f96bc275ab1d037416  xrdp-0.9.16-neutrinordp.patch
+1e9b78a534b31c8fc8d1540c123489f00cb133a3499e3c01c2977f58bff3047f7a11d7c0fb3046b56ca6d425036a47f986b0fd0137d50889c700ebafcba2f65f  xrdp_ini.patch"
