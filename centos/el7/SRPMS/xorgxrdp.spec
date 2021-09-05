@@ -1,14 +1,13 @@
-%global xorg_server_version %(pkg-config --silence-errors --modversion xorg-server 2>/dev/null || echo 65536)
-
 Name:           xorgxrdp
-Version:        0.2.16
-Release:        0%{?dist}
+Version:        0.2.17
+Release:        1%{?dist}
 Summary:        Implementation of xrdp backend as Xorg modules
 
 License:        MIT
 URL:            https://github.com/neutrinolabs/xorgxrdp
 Source0:        https://github.com/neutrinolabs/xorgxrdp/releases/download/v%{version}/%{name}-%{version}.tar.gz
 
+BuildRequires: make
 BuildRequires:  nasm
 BuildRequires:  xorg-x11-server-devel
 BuildRequires:  xrdp-devel >= 1:0.9.16
@@ -17,7 +16,9 @@ BuildRequires:  libXfont-devel
 %else
 BuildRequires:  libXfont2-devel
 %endif
-Requires:       xorg-x11-server-Xorg%{_isa} = %{xorg_server_version}
+Requires:       Xorg %(xserver-sdk-abi-requires videodrv)
+Requires:       Xorg %(xserver-sdk-abi-requires xinput)
+
 
 %description
 xorgxrdp is a set of X11 modules that make Xorg act as a backend for
@@ -55,6 +56,24 @@ for screen resizing and multiple monitors.
 
 
 %changelog
+* Tue Aug 31 2021 Bojan Smojver <bojan@rexursive.com> - 0.2.17-1
+- Bump up to 0.2.17
+
+* Sat Aug 21 2021 Carl George <carl@george.computer> - 0.2.16-3
+- Use xserver-sdk-abi-requires to require xserver ABI versions
+
+* Fri Jul 23 2021 Fedora Release Engineering <releng@fedoraproject.org> - 0.2.16-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Sat May  1 2021 Bojan Smojver <bojan@rexursive.com> - 0.2.16-1
+- Bump up to 0.2.16
+
+* Wed Apr 14 2021 Bojan Smojver <bojan@rexursive.com> - 0.2.15-2
+- Rebuild against xorg-x11-server 1.20.11
+
+* Thu Jan 28 2021 Fedora Release Engineering <releng@fedoraproject.org> - 0.2.15-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
 * Wed Dec 23 2020 Bojan Smojver <bojan@rexursive.com> - 0.2.15-1
 - Bump up to 0.2.15
 

@@ -4,13 +4,13 @@
 %define gittag_s f7832d6
 
 Summary: NeutrinoRDP RDP Client fork from FreeRDP 1.0.1
-Name: NeutrinoRDP
+Name: neutrinordp
 Version: git%{gittag_s}
 Release: 1%{?dist}
 License: Apache License 2.0
 Group: Applications/Communications
 URL: https://github.com/neutrinolabs/NeutrinoRDP
-Source: https://github.com/neutrinolabs/NeutrinoRDP/archive/%{gittag}.tar.gz#/neutrinolabs-NeutrinoRDP-%{gittag_s}.tar.gz
+Source: https://github.com/neutrinolabs/NeutrinoRDP/archive/%{gittag}.tar.gz#/neutrinolabs-neutrinordp-%{gittag_s}.tar.gz
 Patch0: CMakeLists.txt.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  openssl-devel
@@ -18,19 +18,22 @@ BuildRequires:	libX11-devel, libXcursor-devel, libXext-devel, libXinerama-devel,
 BuildRequires:	cups-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	pcsc-lite-devel
+Conflicts:	freerdp1.2	
+BuildConflicts:	freerdp1.2-devel
 
 %description
 NeutrinoRDP is a free implementation of the Remote Desktop Protocol (RDP)
 according to the Microsoft Open Specifications.
 This is a fork of FreeRDP 1.0.1.
 
-%package -n xfreerdp
+%package xfreerdp
 Summary: Remote Desktop Protocol client
 Group: Applications/Communications
 Requires: %{name}-libs = %{version}-%{release}, %{name}-plugins-standard = %{version}-%{release}
-%description -n xfreerdp
-FreeRDP is a free implementation of the Remote Desktop Protocol (RDP)
+%description xfreerdp
+xfreerdp is a free implementation of the Remote Desktop Protocol (RDP)
 according to the Microsoft Open Specifications.
+This is a fork of FreeRDP 1.0.1.
 
 %package libs
 Summary: Core libraries implementing the RDP protocol
@@ -83,7 +86,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/{freerdp/,lib}*.{a,la} # FIXME: They shouldn't b
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files -n xfreerdp
+%files xfreerdp
 %defattr(-,root,root)
 %{_bindir}/xfreerdp
 # %{_mandir}/*/*
@@ -106,6 +109,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*
 
 %changelog
+* Sun Sep 05 2021 TOMATO <junker.tomato@gmaill.com> - gitf7832d6-1
+- rename neutrinordp
+
 * Sun May 16 2021 TOMATO <junker.tomato@gmaill.com> - gitf7832d6-0
 - bump up neutrinordp#f7832d6
 

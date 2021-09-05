@@ -11,8 +11,8 @@
 
 Summary:   Open source remote desktop protocol (RDP) server
 Name:      xrdp
-Epoch:     1
-Version:   0.9.16
+Epoch:     2
+Version:   0.9.17
 Release:   1%{?dist}
 License:   ASL 2.0 and GPLv2+ and MIT
 URL:       http://www.xrdp.org/
@@ -24,19 +24,18 @@ Source4:   openssl.conf
 Source5:   README.Fedora
 Source6:   xrdp.te
 Source7:   xrdp-polkit-1.rules
-Source8:   xrdp.ini.RDP-Proxy_enabled
 Patch0:    xrdp-0.9.9-sesman.patch
-Patch1:    xrdp-0.9.16-neutrinordp.patch
+Patch1:    xrdp-0.9.17-xrdp-ini.patch
 Patch2:    xrdp-0.9.4-service.patch
 Patch3:    xrdp-0.9.10-scripts-libexec.patch
 Patch4:    xrdp-0.9.6-script-interpreter.patch
-Patch5:    xrdp-0.9.15-arch.patch
+Patch5:    xrdp-0.9.16-arch.patch
 Patch6:    xrdp-0.9.14-vnc-uninit.patch
 %if 0%{?fedora} >= 32 || 0%{?rhel} >= 8
 Patch7:    xrdp-0.9.15-sesman-ini.patch
 %endif
-Patch8:    dynamic-link.patch
 
+BuildRequires: make
 BuildRequires: gcc
 BuildRequires: libX11-devel
 BuildRequires: libXfixes-devel
@@ -92,13 +91,14 @@ Requires(postun): /usr/sbin/semodule
 %description selinux
 This package contains SELinux policy module necessary to run xrdp.
 
-%package neutrinordp
+%package rdpproxy
 Summary: RDP Proxy module for xrdp
 
 Requires: %{name} = %{epoch}:%{version}-%{release}
-Requires: NeutrinoRDP-libs
+Requires: neutrinordp-libs
+BuildRequires: neutrinordp-devel
 
-%description neutrinordp
+%description rdpproxy
 This package contains RDP Proxy module for xrdp (neutrinordp-any)
 
 %prep
@@ -108,9 +108,6 @@ This package contains RDP Proxy module for xrdp (neutrinordp-any)
 # SELinux policy module
 %{__mkdir} SELinux
 %{__cp} -p %{SOURCE6} SELinux
-
-# RDP-Proxy ini 
-%{__cp} %{SOURCE8} xrdp
 
 # create 'bash -l' based startwm, to pick up PATH etc.
 echo '#!/bin/bash -l
@@ -157,9 +154,6 @@ cd -
 
 #install xrdp.rules /usr/share/polkit-1/rules.d
 %{__install} -Dp -m 644 %{SOURCE7} %{buildroot}%{_datadir}/polkit-1/rules.d/xrdp.rules
-
-#install xrdp.ini.RDP-Proxy_enabled
-%{__install} -Dp -m 644 %{SOURCE8} %{buildroot}%{_sysconfdir}/xrdp/xrdp.ini.RDP-Proxy_enabled
 
 # SELinux policy module
 for selinuxvariant in %{selinux_variants}
@@ -277,8 +271,7 @@ fi
 %{_unitdir}/xrdp-sesman.service
 %{_unitdir}/xrdp.service
 %exclude %{_includedir}/painter.h
-#%exclude %{_libdir}/libpainter.*
-%{_libdir}/libpainter.so
+%exclude %{_libdir}/libpainter.*
 %exclude %{_libdir}/pkgconfig/libpainter.pc
 %exclude %{_libdir}/*.a
 %exclude %{_libdir}/*.la
@@ -286,7 +279,6 @@ fi
 %exclude %{_libdir}/xrdp/*.la
 %ghost %{_localstatedir}/log/xrdp.log
 %ghost %{_localstatedir}/log/xrdp-sesman.log
-#%{_libdir}/xrdp/libxrdpneutrinordp.so
 
 %files devel
 %{_includedir}/ms-*
@@ -299,19 +291,28 @@ fi
 %doc SELinux/%{name}.te
 %{_datadir}/selinux/*/%{name}.pp
 
-%files neutrinordp
+%files rdpproxy
 %{_libdir}/xrdp/libxrdpneutrinordp.so
-%config %{_sysconfdir}/xrdp/xrdp.ini.RDP-Proxy_enabled
+
 
 %changelog
-* Sat May 22 2021 TOMATO <junker.tomato@gmail.com> - 1:0.9.16-1
-- NeutrinoRDP Proxy logging patch #1875
+* Sun Sep 5 2021 TOMATO <junker.tomato@gmail.com> - 2:0.9.17-1
+- enable NeutrinoRDP proxy module
 
-* Sat May 1 2021 TOMATO <junker.tomato@gmail.com> - 1:0.9.16-0
+* Wed Sep  1 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.17-1
+- Bump up to 0.9.17
+
+* Fri Jul 23 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.16-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Wed Jul 14 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.16-2
+- Bring logrotate file in line with defaults (BZ #1977175).
+
+* Sat May  1 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.16-1
 - Bump up to 0.9.16
 
-* Mon Apr 12 2021 TOMATO <junker.tomato@gmail.com> - 1:0.9.15-3
-- add xrdp-RDPproxy
+* Thu Jan 28 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.15-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
 * Sat Jan  2 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.15-3
 - Remove setpriv patch and adjust SELinux policy to match
@@ -323,7 +324,7 @@ fi
 - Bump up to 0.9.15
 
 * Tue Sep  1 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.14-3
-- Add a patch for uninitialised variables, courtesy of Dan Horák
+- Add a patch for uninitialised variables, courtesy of Dan Horak
 
 * Mon Aug 31 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.14-2
 - Bump up to 0.9.14
@@ -546,7 +547,7 @@ fi
 - service files fixes and dependencies
 - sesman default configuration
 
-* Wed Jul 15 2015 Dan Horák <dan[at]danny.cz> - 1:0.9.0-2
+* Wed Jul 15 2015 Dan Horak <dan[at]danny.cz> - 1:0.9.0-2
 - install epoch back to keep clean upgrade path
 
 * Tue Jul 14 2015 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 0.9.0-1
@@ -562,7 +563,7 @@ fi
 * Fri May 15 2015 Bojan Smojver <bojan@rexursive.com> - 1:0.6.1-9
 - hopefully better service dependencies
 
-* Thu Apr 23 2015 Dan Horák <dan[at]danny.cz> - 1:0.6.1-8
+* Thu Apr 23 2015 Dan Horak <dan[at]danny.cz> - 1:0.6.1-8
 - fix upgrade path after the 0.8 bump in 2014-09 by adding Epoch
 
 * Mon Dec 22 2014 Bojan Smojver <bojan@rexursive.com> - 0.6.1-7
@@ -589,7 +590,7 @@ fi
 * Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.6.0-0.8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
-* Tue Jan 29 2013 Dan Horák <dan[at]danny.cz> - 0.6.0-0.7
+* Tue Jan 29 2013 Dan Horak <dan[at]danny.cz> - 0.6.0-0.7
 - fix check for big endian arches (#905411)
 
 * Sun Jul 22 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.6.0-0.6
