@@ -18,6 +18,10 @@ BuildRequires:	libX11-devel, libXcursor-devel, libXext-devel, libXinerama-devel,
 BuildRequires:	cups-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	pcsc-lite-devel
+Conflicts:  freerdp
+Conflicts:  freerdp-libs
+Conflicts:  freerdp-plugins
+BuildConflicts: freerdp-devel
 
 %description
 NeutrinoRDP is a free implementation of the Remote Desktop Protocol (RDP)
