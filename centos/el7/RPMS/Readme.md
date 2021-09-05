@@ -16,5 +16,5 @@
  - 既存EPELのxrdpをインストール済みのLinux Desktop に RDP-Proxyを追加する場合   
     EPELのxrdpにadd onとしてインストールできます。 
 ```
-    yum localinstall xrdp-neutrinordp-0.9.xx-x.x86_64.rpm NeutrinoRDP-libs-devel-x.el7.x86_64.rpm
+    yum localinstall xrdp-rdpproxy-0.9.xx-x.x86_64.rpm neutrinordp-libs-gitxxxxx-1.el7.x86_64.rpm
 ```
