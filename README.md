@@ -2,7 +2,7 @@
 xrdp with NeutrinoRDP proxy module
 
 RDP Proxy (NeutrinoRDP-any)モジュールを有効にした、xrdp  です。  
-Apache GUACAMOLE のように Microsoft Windows の RDP プロトコルのProxy として動作します。  
+Microsoft Windows の RDP プロトコルのProxy として動作します。  
   
 xrdpはRDPプロトコルでLinux GUIに接続するソリューションとして多くのディストリビューションで採用されています。  
 xrdpはRDP Proxyとして動作する NeutrinoRDP-any モードを持っていますが、xrdp.ini の [NeutrinoRDP-Any] セクションを有効にしてもほとんどのディストリビューションでは利用できません。  
@@ -12,7 +12,7 @@ xrdpは主にWindowsクライアントからLinux Desktopへの GUIログイン�
    
 ここにあるのは libxrdpneutrinordp.so を同梱しRDP Proxy として動作するようにした xrdp で、以下のものを置いています。  
    
-- CentOS 7 用RPMバイナリパッケージ(x86_64)、SRPMソースパッケージ
+- RockyLinux/Almalinux/CentOS 用RPMバイナリパッケージ(x86_64)、SRPMソースパッケージ
 - Alpine Linux 3.xx 用APKバイナリパッケージ(x86_64,arm,arch64)、srcパッケージ
 - Dockerコンテナbuild用 dockerfile
 
