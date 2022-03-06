@@ -1,4 +1,4 @@
-CentOS 6.8上でX11RDP-rh-matic を利用して作成した xrdp 0.9.17 と NeutrinoRDPの SRPMです。  
+CentOS 6.8上でX11RDP-rh-matic を利用して作成した xrdp 0.9.1x と NeutrinoRDPの SRPMです。  
 自分のために作ったので無保証です。
 
 build方法
@@ -7,7 +7,7 @@ build方法
 buildに必要packageは以下を参照  
 https://github.com/neutrinolabs/NeutrinoRDP/wiki/Compilation  
 
-rpm -Uvh NeutrinoRDP-devel-2.el6.src.rpm  
+rpm -Uvh NeutrinoRDP-gitf7832d6-1.el6.src.rpm  
 QA_RPATHS=0x0001 rpmbuild -ba --clean rpmbuild/SPECS/neutrinordp.spec  
 
 2.xrdp を build  
@@ -18,7 +18,7 @@ SCL3をインストール
 sudo yum install scl-utils devtoolset-3-toolchain devtoolset-3-perftools   
   
 先にNeutrinoRDPのlibとdevelをインストール  
-sudo yum localinstall NeutrinoRDP-devel-devel-2.el6.x86_64.rpm NeutrinoRDP-libs-devel-2.el6.x86_64.rpm  
+sudo yum localinstall NeutrinoRDP-devel-gitf7832d6-1.el6.x86_64.rpm NeutrinoRDP-libs-gitf7832d6-1.el6.x86_64.rpm  
 rpm -Uvh xrdp-0.9.1X.xxxxxxx.el6.src.rpm  
   
 Software colection で gcc 4.9を有効にする  
