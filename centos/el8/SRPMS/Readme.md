@@ -4,7 +4,7 @@
 dnf groupinstall -y "Development Tools"
 dnf --enablerepo powertools install -y gcc git cmake openssl-devel libX11-devel libXext-devel libXinerama-devel libXcursor-devel \
  libXdamage-devel libXv-devel libxkbfile-devel alsa-lib-devel cups-devel libjpeg-turbo-devel libXrandr-devel turbojpeg-devel pcsc-lite-devel \
- sudo wget which SDL2 hardlink imlib2-devel libXfont2-devel
+ sudo wget which SDL2 hardlink imlib2-devel libXfont2-devel bash-completion
 
 dnf install -y epel-release
 
