@@ -1,7 +1,8 @@
 # cmake
 # make package_source
-%define gittag f7832d6ce8f12f4b999a2a4edc6cc72373bc5168
-%define gittag_s f7832d6
+%define gittag 836b738ae3739c275ed9b3eedb7d581067911b70
+%define gittag_s 836b738
+%define _unpackaged_files_terminate_build 0
 
 Summary: NeutrinoRDP RDP Client fork from FreeRDP 1.0.1
 Name: neutrinordp
@@ -109,6 +110,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*
 
 %changelog
+* Sun Jun 12 2022 TOMATO <junker.tomato@gmaill.com> - git836b738-1
+- bump up neutrinordp#836b738
+
 * Sun Sep 05 2021 TOMATO <junker.tomato@gmaill.com> - gitf7832d6-1
 - rename neutrinordp
 

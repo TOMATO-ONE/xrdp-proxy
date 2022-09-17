@@ -3,16 +3,20 @@
 %global selinux_types %(%{__awk} '/^#[[:space:]]*SELINUXTYPE=/,/^[^#]/ { if ($3 == "-") printf "%s ", $2 }' /etc/selinux/config 2>/dev/null)
 %global selinux_variants %([ -z "%{selinux_types}" ] && echo mls targeted || echo %{selinux_types})
 
-%if 0%{?fedora} >= 31
+%if 0%{?fedora} >= 31 || 0%{?rhel} >= 9
 %global _hardlink /usr/bin/hardlink
 %else
 %global _hardlink /usr/sbin/hardlink
 %endif
 
+%if ! 0%{?fedora} && 0%{?rhel} <= 7
+%global _missing_braces -Wno-error=missing-braces
+%endif
+
 Summary:   Open source remote desktop protocol (RDP) server
 Name:      xrdp
 Epoch:     2
-Version:   0.9.17
+Version:   0.9.20
 Release:   1%{?dist}
 License:   ASL 2.0 and GPLv2+ and MIT
 URL:       http://www.xrdp.org/
@@ -30,16 +34,18 @@ Patch2:    xrdp-0.9.4-service.patch
 Patch3:    xrdp-0.9.10-scripts-libexec.patch
 Patch4:    xrdp-0.9.6-script-interpreter.patch
 Patch5:    xrdp-0.9.16-arch.patch
-Patch6:    xrdp-0.9.14-vnc-uninit.patch
+Patch6:    xrdp-0.9.18-vnc-uninit.patch
 %if 0%{?fedora} >= 32 || 0%{?rhel} >= 8
-Patch7:    xrdp-0.9.15-sesman-ini.patch
+Patch7:    xrdp-0.9.20-sesman-ini.patch
 %endif
 
 BuildRequires: make
 BuildRequires: gcc
+BuildRequires: automake autoconf libtool
 BuildRequires: libX11-devel
 BuildRequires: libXfixes-devel
 BuildRequires: libXrandr-devel
+BuildRequires: imlib2-devel
 BuildRequires: openssl
 BuildRequires: pam-devel
 BuildRequires: pkgconfig(fuse)
@@ -47,15 +53,16 @@ BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(pixman-1)
 BuildRequires: pkgconfig(systemd)
 BuildRequires: nasm
+BuildRequires: neutrinordp-devel
 
 BuildRequires: checkpolicy, selinux-policy-devel
 BuildRequires: %{_hardlink}
 
 # tigervnc-server-minimal provides Xvnc (default for now)
 # xorgxrdp is another back end, depends on specific Xorg binary, omit
-#Requires: tigervnc-server-minimal
-#Requires: xorg-x11-xinit
-#Requires: util-linux
+# Requires: tigervnc-server-minimal
+# Requires: xorg-x11-xinit
+Requires: util-linux
 
 %if 0%{?fedora} || 0%{?rhel} >= 8
 Recommends: %{name}-selinux = %{epoch}:%{version}-%{release}
@@ -114,10 +121,11 @@ echo '#!/bin/bash -l
 . %{_libexecdir}/xrdp/startwm.sh' > sesman/startwm-bash.sh
 
 %build
-./bootstrap
+autoreconf -vif
+CFLAGS="$RPM_OPT_FLAGS %{?_missing_braces}" \
 %configure --enable-fuse --enable-pixman --enable-painter --enable-vsock \
-           --enable-neutrinordp --enable-jpeg --enable-tjpeg \
-           --with-socketdir=%{_rundir}/%{name}
+           --enable-ipv6 --with-socketdir=%{_rundir}/%{name} --with-imlib2 \
+           --enable-neutrinordp
 %make_build
 
 # SELinux policy module
@@ -219,7 +227,7 @@ fi
 
 
 %files
-%doc COPYING *.txt README.Fedora
+%doc COPYING README.Fedora
 %dir %{_libdir}/xrdp
 %dir %{_sysconfdir}/xrdp
 %dir %{_sysconfdir}/xrdp/pulse
@@ -294,10 +302,48 @@ fi
 %files rdpproxy
 %{_libdir}/xrdp/libxrdpneutrinordp.so
 
-
 %changelog
-* Sun Sep 5 2021 TOMATO <junker.tomato@gmail.com> - 2:0.9.17-1
+* Sat Sep 17 2022 TOMATO <junker.tomato@gmail.com> - 2:0.9.20-1
 - enable NeutrinoRDP proxy module
+
+* Thu Sep 15 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.20-1
+- Bump up to 0.9.20
+
+* Sat Jul 23 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.19-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
+
+* Thu Mar 17 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.19-1
+- Bump up to 0.9.19
+
+* Tue Feb  8 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.18-5
+- Add patch for CVE-2022-23613
+
+* Sat Jan 22 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.18-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
+* Fri Jan 14 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.18-3
+- Add patch for imlib2 on RHEL7/8
+
+* Wed Jan 12 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.18-2
+- Bump release up for rebuild
+
+* Tue Jan 11 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.18-1
+- Bump up to 0.9.18
+
+* Sat Jan  8 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.17-6
+- Adjust hardlink condition for EPEL 9
+
+* Thu Dec  9 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.17-5
+- Enable (experimental) IPv6 support (bug #2028630)
+
+* Thu Nov 11 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.17-4
+- Add -Wno-error=deprecated-declarations to CFLAGS to avoid build errors
+
+* Tue Sep 14 2021 Sahana Prasad <sahana@redhat.com> - 1:0.9.17-3
+- Rebuilt with OpenSSL 3.0.0
+
+* Mon Sep  6 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.17-2
+- Trivially implement missing rfb_get_eds_status_msg() function
 
 * Wed Sep  1 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.17-1
 - Bump up to 0.9.17
@@ -324,7 +370,7 @@ fi
 - Bump up to 0.9.15
 
 * Tue Sep  1 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.14-3
-- Add a patch for uninitialised variables, courtesy of Dan Horak
+- Add a patch for uninitialised variables, courtesy of Dan Horák
 
 * Mon Aug 31 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.14-2
 - Bump up to 0.9.14
@@ -547,7 +593,7 @@ fi
 - service files fixes and dependencies
 - sesman default configuration
 
-* Wed Jul 15 2015 Dan Horak <dan[at]danny.cz> - 1:0.9.0-2
+* Wed Jul 15 2015 Dan Horák <dan[at]danny.cz> - 1:0.9.0-2
 - install epoch back to keep clean upgrade path
 
 * Tue Jul 14 2015 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 0.9.0-1
@@ -563,7 +609,7 @@ fi
 * Fri May 15 2015 Bojan Smojver <bojan@rexursive.com> - 1:0.6.1-9
 - hopefully better service dependencies
 
-* Thu Apr 23 2015 Dan Horak <dan[at]danny.cz> - 1:0.6.1-8
+* Thu Apr 23 2015 Dan Horák <dan[at]danny.cz> - 1:0.6.1-8
 - fix upgrade path after the 0.8 bump in 2014-09 by adding Epoch
 
 * Mon Dec 22 2014 Bojan Smojver <bojan@rexursive.com> - 0.6.1-7
@@ -590,7 +636,7 @@ fi
 * Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.6.0-0.8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
-* Tue Jan 29 2013 Dan Horak <dan[at]danny.cz> - 0.6.0-0.7
+* Tue Jan 29 2013 Dan Horák <dan[at]danny.cz> - 0.6.0-0.7
 - fix check for big endian arches (#905411)
 
 * Sun Jul 22 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.6.0-0.6
