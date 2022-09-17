@@ -1,5 +1,5 @@
-%define	xorgxrdpver	0.2.17
-%define xrdpver         0.9.17
+%define	xorgxrdpver	0.9.19
+%define xrdpver         0.9.20
 %define	xorgxrdpbranch	v0.9
 %define moduledir	%(pkg-config xorg-server --variable=moduledir)
 %define driverdir	%{moduledir}/drivers

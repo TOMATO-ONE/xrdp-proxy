@@ -1,16 +1,16 @@
 # cmake
 # make package_source
-%define gittag f7832d6ce8f12f4b999a2a4edc6cc72373bc5168
-%define gittag_s f7832d6
+%define gittag 836b738ae3739c275ed9b3eedb7d581067911b70
+%define gittag_s 836b738
 
 Summary: NeutrinoRDP RDP Client fork from FreeRDP 1.0.1
-Name: NeutrinoRDP
+Name: neutrinordp
 Version: git%{gittag_s}
 Release: 1%{?dist}
 License: Apache License 2.0
 Group: Applications/Communications
 URL: https://github.com/neutrinolabs/NeutrinoRDP
-Source: https://github.com/neutrinolabs/NeutrinoRDP/archive/%{gittag}.tar.gz#/neutrinolabs-NeutrinoRDP-%{gittag_s}.tar.gz
+Source: https://github.com/neutrinolabs/NeutrinoRDP/archive/%{gittag}.tar.gz#/neutrinolabs-neutrinordp-%{gittag_s}.tar.gz
 Patch0: CMakeLists.txt.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  openssl-devel
@@ -18,10 +18,6 @@ BuildRequires:	libX11-devel, libXcursor-devel, libXext-devel, libXinerama-devel,
 BuildRequires:	cups-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	pcsc-lite-devel
-Conflicts:  freerdp
-Conflicts:  freerdp-libs
-Conflicts:  freerdp-plugins
-BuildConflicts: freerdp-devel
 
 %description
 NeutrinoRDP is a free implementation of the Remote Desktop Protocol (RDP)
@@ -110,6 +106,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*
 
 %changelog
+* Sat Sep 17 2022 TOMATO <junker.tomato@gmaill.com> - git836b738-0
+- bump up neutrinordp#836b738
+
 * Sun May 16 2021 TOMATO <junker.tomato@gmaill.com> - gitf7832d6-0
 - bump up neutrinordp#f7832d6
 

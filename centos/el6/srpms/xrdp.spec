@@ -1,4 +1,4 @@
-%define	xrdpver		0.9.17
+%define	xrdpver		0.9.20
 %define	xrdpbranch	v0.9
 
 %if 0%{?fedora} >= 16 || 0%{?rhel} >= 7
@@ -13,11 +13,13 @@ Version:	%{xrdpver}
 License:	ASL 2.0
 Release:	1%{?dist}
 URL:		http://www.xrdp.org/
-Source0:	xrdp-0.9.17.tar.gz
+Source0:	xrdp-%{xrdpver}.tar.gz
 Source1:	xrdp.init
 Source2:	xrdp.sysconfig
 Source3:	xrdp.logrotate
-# Patch0:		xrdp-0.9.16-neutrinordp.patch
+#Patch1:		
+#Patch2:		
+#Patch3:		
 
 # Basic dependensies
 BuildRequires:	autoconf268
@@ -34,6 +36,12 @@ BuildRequires:	make
 BuildRequires:	nasm
 # Additional dependencies which vary on depending on build options
 BuildRequires:	libjpeg-turbo-devel fuse-devel
+BuildRequires:  pixman
+BuildRequires:  pixman-devel
+BuildRequires:  fuse-devel
+BuildRequires:  turbojpeg
+BuildRequires:  turbojpeg-devel
+#BuildRequires:  imlib2-devel
 # Runtime dependencies
 Requires:	fuse
 
@@ -55,7 +63,10 @@ RDP server for Linux
 
 %prep
 %setup -q -n xrdp-%{xrdpver}
-# %patch0 -p 2
+#%patch1 -p1
+#%patch2 -p1
+#%patch3 -p1
+
 
 %build
 if [ -d libpainter ]; then
@@ -69,7 +80,7 @@ fi
 ./bootstrap
 %configure \
 	--enable-fuse --enable-jpeg --enable-tjpeg --enable-neutrinordp --disable-static \
-        --enable-pixman --enable-painter
+        --enable-pixman --enable-painter CFLAGS="-Wno-error=missing-braces"
 %{__make}
 
 %install
@@ -143,7 +154,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%doc COPYING *.txt
+#%doc COPYING *.txt
 %dir %{_libdir}/xrdp
 %dir %{_datadir}/xrdp
 %dir %{_sysconfdir}/xrdp
@@ -175,6 +186,15 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Sat Sep 17 2022 TOMATO <junker.tomato@gmaill.com> - 0.9.20-1
+- Bump up to 0.9.20
+
+* Thu Mar 17 2022 TOMATO <junker.tomato@gmaill.com> - 0.9.19-1
+- Bump up to 0.9.19
+
+* Sat Jan 15 2022 TOMATO <junker.tomato@gmaill.com> - 0.9.18-1
+- Bump up to 0.9.18
+
 * Sun Sep 05 2021 TOMATO <junker.tomato@gmaill.com> - 0.9.17-1
 - Bump up to 0.9.17
 
