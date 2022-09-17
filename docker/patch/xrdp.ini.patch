@@ -1,0 +1,173 @@
+### diff -uprN xrdp.ini.orig xrdp.ini
+--- a/xrdp/xrdp.ini.orig
++++ b/xrdp/xrdp.ini
+@@ -218,22 +218,22 @@
+ ; Some session types such as Xorg, X11rdp and Xvnc start a display server.
+ ; Startup command-line parameters for the display server are configured
+ ; in sesman.ini. See and configure also sesman.ini.
+-[Xorg]
+-name=Xorg
+-lib=libxup.so
+-username=ask
+-password=ask
+-ip=127.0.0.1
+-port=-1
+-code=20
++#[Xorg]
++#name=Xorg
++#lib=libxup.so
++#username=ask
++#password=ask
++#ip=127.0.0.1
++#port=-1
++#code=20
+
+-[Xvnc]
+-name=Xvnc
+-lib=libvnc.so
+-username=ask
+-password=ask
+-ip=127.0.0.1
+-port=-1
++#[Xvnc]
++#name=Xvnc
++#lib=libvnc.so
++#username=ask
++#password=ask
++#ip=127.0.0.1
++#port=-1
+ #xserverbpp=24
+ #delay_ms=2000
+ ; Disable requested encodings to support buggy VNC servers
+@@ -278,11 +278,11 @@
+ #pamsessionmng=127.0.0.1
+ ; Currently NeutrinoRDP doesn't support dynamic resizing. Uncomment
+ ; this line if you're using a client which does.
+-#enable_dynamic_resizing=false
++enable_dynamic_resizing=false
+ ; By default, performance settings requested by the RDP client are ignored
+ ; and chosen by NeutrinoRDP. Uncomment this line to allow the user to
+ ; select performance settings in the RDP client.
+-#perf.allow_client_experiencesettings=true
++perf.allow_client_experiencesettings=true
+ ; Override any experience setting by uncommenting one or more of the
+ ; following lines.
+ #perf.wallpaper=false
+@@ -295,11 +295,11 @@
+ ; By default NeutrinoRDP supports cursor shadows. If this is giving
+ ; you problems (e.g. cursor is a black rectangle) try disabling cursor
+ ; shadows by uncommenting the following line.
+-#perf.cursor_shadow=false
++perf.cursor_shadow=false
+ ; By default, NeutrinoRDP uses the keyboard layout of the remote RDP Server.
+ ; If you want to tell the remote the keyboard layout of the RDP Client,
+ ; by uncommenting the following line.
+-#neutrinordp.allow_client_keyboardLayout=true
++neutrinordp.allow_client_keyboardLayout=true
+ ; The following options will override the remote keyboard layout settings.
+ ; These options are for DEBUG and are not recommended for regular use.
+ #neutrinordp.override_keyboardLayout_mask=0x0000FFFF
+@@ -309,9 +309,9 @@
+ #neutrinordp.override_kbd_layout=0x00000409
+
+ ; You can override the common channel settings for each session type
+-#channel.rdpdr=true
+-#channel.rdpsnd=true
+-#channel.drdynvc=true
+-#channel.cliprdr=true
+-#channel.rail=true
+-#channel.xrdpvr=true
++channel.rdpdr=true
++channel.rdpsnd=true
++channel.drdynvc=true
++channel.cliprdr=true
++channel.rail=true
++channel.xrdpvr=true
+~ #
+~ #
+~ #
+~ # diff -uprN xrdp.ini.orig xrdp.ini
+--- xrdp.ini.orig
++++ xrdp.ini
+@@ -218,22 +218,22 @@
+ ; Some session types such as Xorg, X11rdp and Xvnc start a display server.
+ ; Startup command-line parameters for the display server are configured
+ ; in sesman.ini. See and configure also sesman.ini.
+-[Xorg]
+-name=Xorg
+-lib=libxup.so
+-username=ask
+-password=ask
+-ip=127.0.0.1
+-port=-1
+-code=20
++#[Xorg]
++#name=Xorg
++#lib=libxup.so
++#username=ask
++#password=ask
++#ip=127.0.0.1
++#port=-1
++#code=20
+
+-[Xvnc]
+-name=Xvnc
+-lib=libvnc.so
+-username=ask
+-password=ask
+-ip=127.0.0.1
+-port=-1
++#[Xvnc]
++#name=Xvnc
++#lib=libvnc.so
++#username=ask
++#password=ask
++#ip=127.0.0.1
++#port=-1
+ #xserverbpp=24
+ #delay_ms=2000
+ ; Disable requested encodings to support buggy VNC servers
+@@ -278,11 +278,11 @@
+ #pamsessionmng=127.0.0.1
+ ; Currently NeutrinoRDP doesn't support dynamic resizing. Uncomment
+ ; this line if you're using a client which does.
+-#enable_dynamic_resizing=false
++enable_dynamic_resizing=false
+ ; By default, performance settings requested by the RDP client are ignored
+ ; and chosen by NeutrinoRDP. Uncomment this line to allow the user to
+ ; select performance settings in the RDP client.
+-#perf.allow_client_experiencesettings=true
++perf.allow_client_experiencesettings=true
+ ; Override any experience setting by uncommenting one or more of the
+ ; following lines.
+ #perf.wallpaper=false
+@@ -295,11 +295,11 @@
+ ; By default NeutrinoRDP supports cursor shadows. If this is giving
+ ; you problems (e.g. cursor is a black rectangle) try disabling cursor
+ ; shadows by uncommenting the following line.
+-#perf.cursor_shadow=false
++perf.cursor_shadow=false
+ ; By default, NeutrinoRDP uses the keyboard layout of the remote RDP Server.
+ ; If you want to tell the remote the keyboard layout of the RDP Client,
+ ; by uncommenting the following line.
+-#neutrinordp.allow_client_keyboardLayout=true
++neutrinordp.allow_client_keyboardLayout=true
+ ; The following options will override the remote keyboard layout settings.
+ ; These options are for DEBUG and are not recommended for regular use.
+ #neutrinordp.override_keyboardLayout_mask=0x0000FFFF
+@@ -309,9 +309,9 @@
+ #neutrinordp.override_kbd_layout=0x00000409
+
+ ; You can override the common channel settings for each session type
+-#channel.rdpdr=true
+-#channel.rdpsnd=true
+-#channel.drdynvc=true
+-#channel.cliprdr=true
+-#channel.rail=true
+-#channel.xrdpvr=true
++channel.rdpdr=true
++channel.rdpsnd=true
++channel.drdynvc=true
++channel.cliprdr=true
++channel.rail=true
++channel.xrdpvr=true
