@@ -7,7 +7,7 @@ build方法
 buildに必要packageは以下を参照  
 https://github.com/neutrinolabs/NeutrinoRDP/wiki/Compilation  
 
-rpm -Uvh NeutrinoRDP-gitf7832d6-1.el6.src.rpm  
+rpm -Uvh NeutrinoRDP-git836b738-1.el6.src.rpm  
 QA_RPATHS=0x0001 rpmbuild -ba --clean rpmbuild/SPECS/neutrinordp.spec  
 
 2.xrdp を build  
