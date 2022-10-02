@@ -1,0 +1,38 @@
+Format: 1.8
+Date: Sat, 01 Oct 2022 16:32:12 +0000
+Source: xrdp
+Binary: xrdp xrdp-dbgsym
+Architecture: source amd64
+Version: 0.9.20-1
+Distribution: UNRELEASED
+Urgency: medium
+Maintainer: Junker TOMATO <junker.tomato@gmail.com>
+Changed-By: Junker TOMATO <junker.tomato@gmail.com>
+Description:
+ xrdp       - Remote Desktop Protocol (RDP) server
+Changes:
+ xrdp (0.9.20-1) UNRELEASED; urgency=medium
+ .
+   * New upstream release.
+   * Enable RDP-Proxy(--enable-neutrinordp)
+Checksums-Sha1:
+ 5a2f8f82f432eb4480a072e2cd47f91f41124904 1373 xrdp_0.9.20-1.dsc
+ 3b66e3a3e8de6471e0fb3a1df2ef06b1987df706 2062157 xrdp_0.9.20.orig.tar.gz
+ 54d3763edf3dcea77d00568ca8aaf356698ce186 35004 xrdp_0.9.20-1.debian.tar.xz
+ 56c3a448f47d7d11b5a2af9fd29b58f6317a1993 898700 xrdp-dbgsym_0.9.20-1_amd64.deb
+ 9ade7787ef3fdf96ba037cecb7fd9cc55c43a039 7242 xrdp_0.9.20-1_amd64.buildinfo
+ af8a39ef1904ceede268edbc28a0cb45e5059e50 504200 xrdp_0.9.20-1_amd64.deb
+Checksums-Sha256:
+ f20be009ed54b0581cca78c4fb95ad81c2804a5f8908afe4077c1bb361402fb1 1373 xrdp_0.9.20-1.dsc
+ db693401da95b71b4d4e4c99aeb569a546dbdbde343f6d3302b0c47653277abb 2062157 xrdp_0.9.20.orig.tar.gz
+ fadc9ad0a5f30a23877fb426a422357ff159650d037ce12fcb6038b1c73c2df5 35004 xrdp_0.9.20-1.debian.tar.xz
+ c965be1999721f92f9ee52804551473c2f4884e03a57b5cd20a8c384ae3c1306 898700 xrdp-dbgsym_0.9.20-1_amd64.deb
+ 4c913f9d355daee63cc82d4867a786f6e5fb0f8682674a28f38a6b79bda8415c 7242 xrdp_0.9.20-1_amd64.buildinfo
+ fc92148d12841eefe6ba7385b2204505a2f68f6714fac3629683c57ced21fc30 504200 xrdp_0.9.20-1_amd64.deb
+Files:
+ 01e0546e055cf62f458aa734c42d1da3 1373 net optional xrdp_0.9.20-1.dsc
+ 69d5fa76d1ccb06ab6404de40c611f9a 2062157 net optional xrdp_0.9.20.orig.tar.gz
+ 1fade826756997110aac65332c113979 35004 net optional xrdp_0.9.20-1.debian.tar.xz
+ c2094e2a6f077019694722a43b2b0ff9 898700 debug optional xrdp-dbgsym_0.9.20-1_amd64.deb
+ e5352e334ab41c83fc18cdee7ef646ca 7242 net optional xrdp_0.9.20-1_amd64.buildinfo
+ 3ce5f33f4ca7e3e9a8801775ef29ad9c 504200 net optional xrdp_0.9.20-1_amd64.deb
