@@ -15,6 +15,7 @@ xrdpは主にWindowsクライアントからLinux Desktopへの GUIログイン�
 - RockyLinux/Almalinux/CentOS 用RPMバイナリパッケージ(x86_64)、SRPMソースパッケージ
 - Alpine Linux 3.xx 用APKバイナリパッケージ(x86_64,arm,arch64)、srcパッケージ
 - Debian GNU/Linux 11用debパッケージ(amd64)
+- Ubuntu Linux 20.04 LTS/ 22.04 LTS 用debパッケージ(amd64)
 - Dockerコンテナbuild用 dockerfile
 
 docker imageは docker hub でも 公開しています。  
