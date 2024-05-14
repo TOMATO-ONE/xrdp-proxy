@@ -15,9 +15,9 @@
 
 Summary:   Open source remote desktop protocol (RDP) server
 Name:      xrdp
-Epoch:     1
-Version:   0.9.20
-Release:   1%{?dist}
+Epoch:     2
+Version:   0.9.25
+Release:   2%{?dist}
 License:   ASL 2.0 and GPLv2+ and MIT
 URL:       http://www.xrdp.org/
 Source0:   https://github.com/neutrinolabs/xrdp/releases/download/v%{version}/xrdp-%{version}.tar.gz
@@ -38,6 +38,7 @@ Patch6:    xrdp-0.9.18-vnc-uninit.patch
 %if 0%{?fedora} >= 32 || 0%{?rhel} >= 8
 Patch7:    xrdp-0.9.20-sesman-ini.patch
 %endif
+Patch8:    xrdp-0.9.25-2994.patch
 
 BuildRequires: make
 BuildRequires: gcc
@@ -53,14 +54,15 @@ BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(pixman-1)
 BuildRequires: pkgconfig(systemd)
 BuildRequires: nasm
+BuildRequires: nasm
 
 BuildRequires: checkpolicy, selinux-policy-devel
 BuildRequires: %{_hardlink}
 
 # tigervnc-server-minimal provides Xvnc (default for now)
 # xorgxrdp is another back end, depends on specific Xorg binary, omit
-#Requires: tigervnc-server-minimal
-#Requires: xorg-x11-xinit
+# Requires: tigervnc-server-minimal
+Requires: xorg-x11-xinit
 Requires: util-linux
 
 %if 0%{?fedora} || 0%{?rhel} >= 8
@@ -77,6 +79,8 @@ Requires(posttrans): systemd
 
 %package devel
 Summary: Headers and pkg-config files needed to compile xrdp backends
+
+Requires: %{name} = %{epoch}:%{version}-%{release}
 
 %description
 xrdp provides a fully functional RDP server compatible with a wide range
@@ -265,15 +269,12 @@ fi
 %{_mandir}/man5/*
 %{_mandir}/man8/*
 %{_mandir}/man1/*
-%{_libdir}/lib*.so.*
+%{_libdir}/librfxencode.so*
+%{_libdir}/xrdp/lib*.so*
 %exclude %{_libdir}/librfxencode.so
-%{_libdir}/xrdp/lib*.so.*
 %exclude %{_libdir}/xrdp/libcommon.so
-%{_libdir}/xrdp/libmc.so
 %exclude %{_libdir}/xrdp/libscp.so
-%{_libdir}/xrdp/libvnc.so
 %exclude %{_libdir}/xrdp/libxrdp.so
-%{_libdir}/xrdp/libxup.so
 %exclude %{_libdir}/xrdp/libxrdpapi.so
 %{_unitdir}/xrdp-sesman.service
 %{_unitdir}/xrdp.service
@@ -281,18 +282,26 @@ fi
 %exclude %{_libdir}/libpainter.*
 %exclude %{_libdir}/pkgconfig/libpainter.pc
 %exclude %{_libdir}/*.a
-%exclude %{_libdir}/*.la
 %exclude %{_libdir}/xrdp/*.a
+%if 0%{?rhel}
+%exclude %{_libdir}/*.la
 %exclude %{_libdir}/xrdp/*.la
+%endif
 %ghost %{_localstatedir}/log/xrdp.log
 %ghost %{_localstatedir}/log/xrdp-sesman.log
+%exclude %{_libdir}/pkgconfig/rfxcodec.pc
 
 %files devel
 %{_includedir}/ms-*
 %{_includedir}/xrdp*
 %{_includedir}/rfxcodec_*.h
-%{_libdir}/pkgconfig/xrdp.pc
+%{_libdir}/librfxencode.so
+%{_libdir}/xrdp/libcommon.so
+%{_libdir}/xrdp/libscp.so
+%{_libdir}/xrdp/libxrdp.so
+%{_libdir}/xrdp/libxrdpapi.so
 %{_libdir}/pkgconfig/rfxcodec.pc
+%{_libdir}/pkgconfig/xrdp.pc
 
 %files selinux
 %doc SELinux/%{name}.te
@@ -302,76 +311,134 @@ fi
 %{_libdir}/xrdp/libxrdpneutrinordp.so
 
 %changelog
-* Mon Sep 19 2022 TOMATO <junker.tomato@gmail.com> - 2:0.9.20-1
+* Wed May 15 2024 TOMATO <junker.tomato@gmail.com> - 2:0.9.25-2
 - enable NeutrinoRDP proxy module
 
-* Thu Sep 15 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.20-1
+* Wed Mar 13 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.9.25-2
+- Add upstream PR 2994
+
+* Tue Mar 12 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.9.25-1
+- Update to 0.9.25
+
+* Sat Jan 27 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.24-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
+
+* Sun Dec 31 2023 Bojan Smojver <bojan@rexursive.com> - 1:0.9.24-1
+- Update to 0.9.24
+- Remove already applied patch affecting compilation on EL7
+
+* Thu Sep 28 2023 Bojan Smojver <bojan@rexursive.com> - 1:0.9.23.1-1
+- Update to 0.9.23.1
+- CVE-2023-42822
+
+* Fri Sep  1 2023 Bojan Smojver <bojan@rexursive.com> - 1:0.9.23-1
+- Update to 0.9.23
+- CVE-2023-40184
+
+* Sat Jul 22 2023 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.22.1-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
+
+* Tue Jun 13 2023 Leigh Scott <leigh123linux@gmail.com> - 1:0.9.22.1-3
+- Rebuild fo new imlib2
+
+* Tue May 23 2023 Bojan Smojver <bojan@rexursive.com> - 1:0.9.22.1-2
+- Remove C99 loop initialisation on EPEL7
+
+* Tue May 23 2023 Bojan Smojver <bojan@rexursive.com> - 1:0.9.22.1-1
+- Update to 0.9.22.1
+
+* Fri May 19 2023 Bojan Smojver <bojan@rexursive.com> - 1:0.9.22-5
+- Patch session chooser segfault
+- Bugs #2208015 and #2208248
+
+* Wed May 17 2023 Bojan Smojver <bojan@rexursive.com> - 1:0.9.22-4
+- Put back .so files into %%_libdir/xrdp directory
+- Bug #2207733
+
+* Mon May  8 2023 Bojan Smojver <bojan@rexursive.com> - 1:0.9.22-3
+- Exclude rfxcodec.pc - shared library no longer created
+
+* Sun May  7 2023 Bojan Smojver <bojan@rexursive.com> - 1:0.9.22-2
+- Explicitly exclude .la files on RHEL
+
+* Sun May  7 2023 Bojan Smojver <bojan@rexursive.com> - 1:0.9.22-1
+- Bump up to 0.9.22
+
+* Sat Jan 21 2023 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.21-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_38_Mass_Rebuild
+
+* Sun Dec 11 2022 Bojan Smojver <bojan@rexursive.com> - 1:0.9.21-1
+- Bump up to 0.9.21
+- CVE-2022-23468 CVE-2022-23477 CVE-2022-23478 CVE-2022-23479 CVE-2022-23480
+- CVE-2022-23481 CVE-2022-23483 CVE-2022-23482 CVE-2022-23484 CVE-2022-23493
+
+* Thu Sep 15 2022 Bojan Smojver <bojan@rexursive.com> - 1:0.9.20-1
 - Bump up to 0.9.20
 
 * Sat Jul 23 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.19-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
 
-* Thu Mar 17 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.19-1
+* Thu Mar 17 2022 Bojan Smojver <bojan@rexursive.com> - 1:0.9.19-1
 - Bump up to 0.9.19
 
-* Tue Feb  8 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.18-5
+* Tue Feb  8 2022 Bojan Smojver <bojan@rexursive.com> - 1:0.9.18-5
 - Add patch for CVE-2022-23613
 
 * Sat Jan 22 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.18-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 
-* Fri Jan 14 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.18-3
+* Fri Jan 14 2022 Bojan Smojver <bojan@rexursive.com> - 1:0.9.18-3
 - Add patch for imlib2 on RHEL7/8
 
-* Wed Jan 12 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.18-2
+* Wed Jan 12 2022 Bojan Smojver <bojan@rexursive.com> - 1:0.9.18-2
 - Bump release up for rebuild
 
-* Tue Jan 11 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.18-1
+* Tue Jan 11 2022 Bojan Smojver <bojan@rexursive.com> - 1:0.9.18-1
 - Bump up to 0.9.18
 
-* Sat Jan  8 2022 Bojan Smojver <bojan@rexurive.com> - 1:0.9.17-6
+* Sat Jan  8 2022 Bojan Smojver <bojan@rexursive.com> - 1:0.9.17-6
 - Adjust hardlink condition for EPEL 9
 
-* Thu Dec  9 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.17-5
+* Thu Dec  9 2021 Bojan Smojver <bojan@rexursive.com> - 1:0.9.17-5
 - Enable (experimental) IPv6 support (bug #2028630)
 
-* Thu Nov 11 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.17-4
+* Thu Nov 11 2021 Bojan Smojver <bojan@rexursive.com> - 1:0.9.17-4
 - Add -Wno-error=deprecated-declarations to CFLAGS to avoid build errors
 
 * Tue Sep 14 2021 Sahana Prasad <sahana@redhat.com> - 1:0.9.17-3
 - Rebuilt with OpenSSL 3.0.0
 
-* Mon Sep  6 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.17-2
+* Mon Sep  6 2021 Bojan Smojver <bojan@rexursive.com> - 1:0.9.17-2
 - Trivially implement missing rfb_get_eds_status_msg() function
 
-* Wed Sep  1 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.17-1
+* Wed Sep  1 2021 Bojan Smojver <bojan@rexursive.com> - 1:0.9.17-1
 - Bump up to 0.9.17
 
 * Fri Jul 23 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.16-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
-* Wed Jul 14 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.16-2
+* Wed Jul 14 2021 Bojan Smojver <bojan@rexursive.com> - 1:0.9.16-2
 - Bring logrotate file in line with defaults (BZ #1977175).
 
-* Sat May  1 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.16-1
+* Sat May  1 2021 Bojan Smojver <bojan@rexursive.com> - 1:0.9.16-1
 - Bump up to 0.9.16
 
 * Thu Jan 28 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.15-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
-* Sat Jan  2 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.15-3
+* Sat Jan  2 2021 Bojan Smojver <bojan@rexursive.com> - 1:0.9.15-3
 - Remove setpriv patch and adjust SELinux policy to match
 
-* Fri Jan  1 2021 Bojan Smojver <bojan@rexurive.com> - 1:0.9.15-2
+* Fri Jan  1 2021 Bojan Smojver <bojan@rexursive.com> - 1:0.9.15-2
 - Use /usr/libexec/Xorg or Xorg session of Fedora and RHEL8+
 
-* Tue Dec 29 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.15-1
+* Tue Dec 29 2020 Bojan Smojver <bojan@rexursive.com> - 1:0.9.15-1
 - Bump up to 0.9.15
 
-* Tue Sep  1 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.14-3
+* Tue Sep  1 2020 Bojan Smojver <bojan@rexursive.com> - 1:0.9.14-3
 - Add a patch for uninitialised variables, courtesy of Dan Horák
 
-* Mon Aug 31 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.14-2
+* Mon Aug 31 2020 Bojan Smojver <bojan@rexursive.com> - 1:0.9.14-2
 - Bump up to 0.9.14
 - Add a set of patches to deal with new GCC warnings/errors
 - Do not emit warning on failed architecture detection
@@ -384,14 +451,14 @@ fi
 * Wed Jul 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.13.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
-* Tue Jun 30 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.13.1-1
+* Tue Jun 30 2020 Bojan Smojver <bojan@rexursive.com> - 1:0.9.13.1-1
 - Bump up to 0.9.13.1
 - CVE-2022-4044
 
-* Thu May 14 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.13-2
+* Thu May 14 2020 Bojan Smojver <bojan@rexursive.com> - 1:0.9.13-2
 - Move sockets to /run/xrdp, bug #1834178
 
-* Wed Mar 11 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.13-1
+* Wed Mar 11 2020 Bojan Smojver <bojan@rexursive.com> - 1:0.9.13-1
 - Bump up to 0.9.13
 
 * Sat Feb 22 2020 Bojan Smojver <bojan@rexursive.com> - 1:0.9.12-6
@@ -401,98 +468,98 @@ fi
 * Thu Feb 20 2020 Tom Callaway <spot@fedoraproject.org> - 1:0.9.12-5
 - fix license tag (bz1804932)
 
-* Thu Jan 30 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.12-4
+* Thu Jan 30 2020 Bojan Smojver <bojan@rexursive.com> - 1:0.9.12-4
 - README.Fedora: VSOCK support
 - README.Fedora: possibly incorrect SELinux context of the sessions
 - Add polkit-1 rules for colord access and repo refresh
 
-* Mon Jan 13 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.12-3
+* Mon Jan 13 2020 Bojan Smojver <bojan@rexursive.com> - 1:0.9.12-3
 - Add vsock items to SELinux policy (thanks to mm19827 of gmail.com)
 
-* Sun Jan 12 2020 Bojan Smojver <bojan@rexurive.com> - 1:0.9.12-2
+* Sun Jan 12 2020 Bojan Smojver <bojan@rexursive.com> - 1:0.9.12-2
 - Enable vsock (bug #1787953)
 
-* Sun Dec 29 2019 Bojan Smojver <bojan@rexurive.com> - 1:0.9.12-1
+* Sun Dec 29 2019 Bojan Smojver <bojan@rexursive.com> - 1:0.9.12-1
 - Bump up to 0.9.12
 
-* Mon Sep 23 2019 Bojan Smojver <bojan@rexurive.com> - 1:0.9.11-5
+* Mon Sep 23 2019 Bojan Smojver <bojan@rexursive.com> - 1:0.9.11-5
 - Make xrdp-selinux a weak dependency on versions that support them.
 - Drop xrdp-selinux dependency completely.
 
-* Sun Sep 15 2019 Bojan Smojver <bojan@rexurive.com> - 1:0.9.11-3
+* Sun Sep 15 2019 Bojan Smojver <bojan@rexursive.com> - 1:0.9.11-3
 - Decouple xrdp from xorgxrdp, causing repeated installation issues in RHEL.
 
-* Tue Aug 27 2019 Bojan Smojver <bojan@rexurive.com> - 1:0.9.11-2
+* Tue Aug 27 2019 Bojan Smojver <bojan@rexursive.com> - 1:0.9.11-2
 - Increment release for rebuild in F31.
 
-* Thu Aug 22 2019 Bojan Smojver <bojan@rexurive.com> - 1:0.9.11-1
+* Thu Aug 22 2019 Bojan Smojver <bojan@rexursive.com> - 1:0.9.11-1
 - Bump up to 0.9.11
 
-* Sat Aug 10 2019 Bojan Smojver <bojan@rexurive.com> - 1:0.9.10-3
+* Sat Aug 10 2019 Bojan Smojver <bojan@rexursive.com> - 1:0.9.10-3
 - Make sure rsakeys.ini exists (bug #1739176).
 
 * Sat Jul 27 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.10-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
-* Fri May  3 2019 Bojan Smojver <bojan@rexurive.com> - 1:0.9.10-1
+* Fri May  3 2019 Bojan Smojver <bojan@rexursive.com> - 1:0.9.10-1
 - Bump up to 0.9.10
 
 * Sun Feb 03 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.9-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
-* Fri Jan 11 2019 Bojan Smojver <bojan@rexurive.com> - 1:0.9.9-1
+* Fri Jan 11 2019 Bojan Smojver <bojan@rexursive.com> - 1:0.9.9-1
 - Bump up to 0.9.9
 - Fix sesman.ini patch
 - Fix xrdp.ini patch
 
-* Wed Nov 14 2018 Bojan Smojver <bojan@rexurive.com> - 1:0.9.8-2
+* Wed Nov 14 2018 Bojan Smojver <bojan@rexursive.com> - 1:0.9.8-2
 - Make main and selinux packages codependent
 
-* Wed Sep 26 2018 Bojan Smojver <bojan@rexurive.com> - 1:0.9.8-1
+* Wed Sep 26 2018 Bojan Smojver <bojan@rexursive.com> - 1:0.9.8-1
 - Bump up to 0.9.8
 
 * Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.7-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
-* Wed Jul  4 2018 Bojan Smojver <bojan@rexurive.com> - 1:0.9.7-1
+* Wed Jul  4 2018 Bojan Smojver <bojan@rexursive.com> - 1:0.9.7-1
 - Bump up to 0.9.7
 
-* Mon Apr 23 2018 Bojan Smojver <bojan@rexurive.com> - 1:0.9.6-4
+* Mon Apr 23 2018 Bojan Smojver <bojan@rexursive.com> - 1:0.9.6-4
 - mark files in /etc/xrdp/pulse as configs
 - add null command on postun, so that it is never empty
 
-* Mon Apr 23 2018 Bojan Smojver <bojan@rexurive.com> - 1:0.9.6-3
+* Mon Apr 23 2018 Bojan Smojver <bojan@rexursive.com> - 1:0.9.6-3
 - mark files in /etc/xrdp as configs
 - run ldconfig
 - remove chmod of certs/keys
 - fix script interpreter
 
-* Sun Apr 22 2018 Bojan Smojver <bojan@rexurive.com> - 1:0.9.6-2
+* Sun Apr 22 2018 Bojan Smojver <bojan@rexursive.com> - 1:0.9.6-2
 - Allow oddjob-mkhomedir in SELinux policy (stolen from grishin-a)
 - Allow no new privileges transition in SELinux policy
 
-* Tue Mar 27 2018 Bojan Smojver <bojan@rexurive.com> - 1:0.9.6-1
+* Tue Mar 27 2018 Bojan Smojver <bojan@rexursive.com> - 1:0.9.6-1
 - Bump up to 0.9.6
 
-* Fri Mar  9 2018 Bojan Smojver <bojan@rexurive.com> - 1:0.9.5-2
+* Fri Mar  9 2018 Bojan Smojver <bojan@rexursive.com> - 1:0.9.5-2
 - add gcc build requirement
 
 * Fri Feb 09 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 1:0.9.5-2
 - Escape macros in %%changelog
 
-* Sat Dec 30 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.5-1
+* Sat Dec 30 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.5-1
 - Bump up to 0.9.5
 
-* Fri Nov 24 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.4-2
+* Fri Nov 24 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.4-2
 - Patch CVE-2017-16927
 
-* Fri Oct  6 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.4-1
+* Fri Oct  6 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.4-1
 - Bump up to 0.9.4
 
-* Tue Sep 19 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.3-2
+* Tue Sep 19 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.3-2
 - Add patch to clean up sockets
 
-* Thu Aug 10 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.3-1
+* Thu Aug 10 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.3-1
 - Bump up to 0.9.3
 
 * Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.2-14
@@ -501,46 +568,46 @@ fi
 * Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.2-13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 
-* Thu May 18 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.2-12
+* Thu May 18 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.2-12
 - Document problems/workaround with clipboard support in TigerVNC 1.8.0
 
-* Thu May 18 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.2-11
+* Thu May 18 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.2-11
 - Add a patch that allows equal signs in ini file values
 
-* Thu Apr 13 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.2-10
+* Thu Apr 13 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.2-10
 - Use epoch in version dependency
 - Provide selinux sub-package scriptlets
 
-* Thu Apr 13 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.2-9
+* Thu Apr 13 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.2-9
 - Adjust Fedora README file for SELinux changes
 
-* Wed Apr 12 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.2-8
+* Wed Apr 12 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.2-8
 - Add SELinux policy sub-package
 
-* Tue Apr 11 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.2-7
+* Tue Apr 11 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.2-7
 - Own /usr/libexec/xrdp directory
 
-* Tue Apr 11 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.2-6
+* Tue Apr 11 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.2-6
 - Move scripts to /usr/libexec/xrdp, so that they get labelled as bin_t
 
-* Sat Apr  8 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.2-5
+* Sat Apr  8 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.2-5
 - Rework call to Xorg to use setpriv instead, properly
 
-* Fri Apr  7 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.2-4
+* Fri Apr  7 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.2-4
 - Do not call prctl() from xrdp, use setpriv instead
 
-* Tue Apr  4 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.2-3
+* Tue Apr  4 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.2-3
 - Do not attempt xrdp restarts, may cause dnf transaction problems
 - Stop depending on Xorg server, xorgxrdp already does
 - Add README.Fedora
 
-* Mon Apr  3 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.2-2
+* Mon Apr  3 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.2-2
 - Stop using /usr/libexec/Xorg, not present on EL7
 
-* Fri Mar 31 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.2-1
+* Fri Mar 31 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.2-1
 - Bump up to 0.9.2
 
-* Tue Mar 14 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.1-8
+* Tue Mar 14 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.1-8
 - Require tigervnc-server-minimal again, make it default
 - Comment out references to X11rdp
 
@@ -554,14 +621,14 @@ fi
 - Make Xorg backend default
 - Call /usr/libexec/Xorg directly to avoid permission checks
 
-* Tue Feb 21 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.1-5
+* Tue Feb 21 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.1-5
 - Require openssl in posttrans phase
 - Move conditional restart to posttrans phase
 
-* Mon Feb 20 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.1-4
+* Mon Feb 20 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.1-4
 - Move key/cert generation to posttrans stage
 
-* Thu Feb 16 2017 Bojan Smojver <bojan@rexurive.com> - 1:0.9.1-3
+* Thu Feb 16 2017 Bojan Smojver <bojan@rexursive.com> - 1:0.9.1-3
 - Fix log file rotation
 
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.1-2

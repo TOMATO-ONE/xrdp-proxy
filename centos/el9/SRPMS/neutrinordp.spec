@@ -1,8 +1,9 @@
 %global debug_package %{nil}
 # cmake
 # make package_source
-%define gittag 836b738ae3739c275ed9b3eedb7d581067911b70
-%define gittag_s 836b738
+%define gittag 911c4fce7878906783f87e93e860bcea6c4961a7
+%define gittag_s 911c4fc
+%define name_s NeutrinoRDP
 %define _unpackaged_files_terminate_build 0
 
 Summary: NeutrinoRDP RDP Client fork from FreeRDP 1.0.1
@@ -68,7 +69,7 @@ libfreerdp-kbd, libfreerdp-cache, libfreerdp-codec, libfreerdp-rail,
 libfreerdp-gdi and libfreerdp-utils.
 
 %prep
-%setup -n %{name}-%{gittag}
+%setup -n %{name_s}-%{gittag}
 %patch0 
 
 %build
@@ -111,5 +112,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*
 
 %changelog
-* Man Sep 19 2022 TOMATO <junker.tomato@gmaill.com> - git836b738-1
+* Wed May 15 2024 TOMATO <junker.tomato@gmaill.com> - git911c4fc-1
+- bump up neutrinordp#911c4fc
+
+* Mon Sep 19 2022 TOMATO <junker.tomato@gmaill.com> - git836b738-1
 - Initial build for NeutrioRDP 
