@@ -1,4 +1,4 @@
-%define	xrdpver		0.9.20
+%define	xrdpver		0.9.26
 %define	xrdpbranch	v0.9
 
 %if 0%{?fedora} >= 16 || 0%{?rhel} >= 7
@@ -17,12 +17,12 @@ Source0:	xrdp-%{xrdpver}.tar.gz
 Source1:	xrdp.init
 Source2:	xrdp.sysconfig
 Source3:	xrdp.logrotate
-#Patch1:		
+#Patch1:
 #Patch2:		
 #Patch3:		
 
 # Basic dependensies
-BuildRequires:	autoconf268
+BuildRequires:	autoconf >= 2.68
 BuildRequires:	automake
 BuildRequires:	libtool
 BuildRequires:	openssl
@@ -186,6 +186,16 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Sun Jun 23 2024 TOMATO <junker.tomato@gmaill.com> - 0.9.26-1
+- Bump up to 0.9.26
+
+* Thu Jun 04 2024 TOMATO <junker.tomato@gmaill.com> - 0.9.24-1
+- Bump up to 0.9.24
+
+* Sat Jun 10 2023 TOMATO <junker.tomato@gmaill.com> - 0.9.22.1-1
+- Bump up to 0.9.22.1
+  add upstream PR#2715 patch
+
 * Sat Sep 17 2022 TOMATO <junker.tomato@gmaill.com> - 0.9.20-1
 - Bump up to 0.9.20
 
