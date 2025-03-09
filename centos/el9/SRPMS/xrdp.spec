@@ -1,3 +1,5 @@
+#%%global prerelease -rc.1
+
 %global _hardened_build 1
 
 %global selinux_types %(%{__awk} '/^#[[:space:]]*SELINUXTYPE=/,/^[^#]/ { if ($3 == "-") printf "%s ", $2 }' /etc/selinux/config 2>/dev/null)
@@ -13,32 +15,39 @@
 %global _missing_braces -Wno-error=missing-braces
 %endif
 
+%ifarch %{ix86}
+%global _file_offset_bits -D_FILE_OFFSET_BITS=64
+%endif
+
 Summary:   Open source remote desktop protocol (RDP) server
 Name:      xrdp
 Epoch:     2
-Version:   0.9.25
-Release:   2%{?dist}
-License:   ASL 2.0 and GPLv2+ and MIT
+Version:   0.10.2
+Release:   9%{?dist}
+# Automatically converted from old format: ASL 2.0 and GPLv2+ and MIT - review is highly recommended.
+License:   Apache-2.0 AND GPL-2.0-or-later AND LicenseRef-Callaway-MIT
 URL:       http://www.xrdp.org/
-Source0:   https://github.com/neutrinolabs/xrdp/releases/download/v%{version}/xrdp-%{version}.tar.gz
+Source0:   https://github.com/neutrinolabs/xrdp/releases/download/v%{version}%{?prerelease}/xrdp-%{version}%{?prerelease}.tar.gz
 Source1:   xrdp-sesman.pamd
 Source2:   xrdp.sysconfig
 Source3:   xrdp.logrotate
 Source4:   openssl.conf
-Source5:   README.Fedora
+Source5:   README.md
 Source6:   xrdp.te
 Source7:   xrdp-polkit-1.rules
-Patch0:    xrdp-0.9.9-sesman.patch
-Patch1:    xrdp-0.9.17-xrdp-ini.patch
-Patch2:    xrdp-0.9.4-service.patch
-Patch3:    xrdp-0.9.10-scripts-libexec.patch
+Source8:   %{name}-tmpfiles.conf
+Source9:   %{name}.sysusers
+Patch0:    xrdp-0.10.2-sesman.patch
+#Patch1:    xrdp-0.10.2-xrdp-ini.patch
+Patch2:    xrdp-0.10.1-service.patch
+Patch3:    xrdp-0.10.0-scripts-libexec.patch
 Patch4:    xrdp-0.9.6-script-interpreter.patch
 Patch5:    xrdp-0.9.16-arch.patch
 Patch6:    xrdp-0.9.18-vnc-uninit.patch
 %if 0%{?fedora} >= 32 || 0%{?rhel} >= 8
-Patch7:    xrdp-0.9.20-sesman-ini.patch
+Patch7:    xrdp-0.10.2-sesman-ini.patch
 %endif
-Patch8:    xrdp-0.9.25-2994.patch
+Patch8:    xrdp-0.10.2-utmpfix.patch
 
 BuildRequires: make
 BuildRequires: gcc
@@ -49,19 +58,24 @@ BuildRequires: libXrandr-devel
 BuildRequires: imlib2-devel
 BuildRequires: openssl
 BuildRequires: pam-devel
-BuildRequires: pkgconfig(fuse)
+BuildRequires: pkgconfig(fuse3)
 BuildRequires: pkgconfig(openssl)
 BuildRequires: pkgconfig(pixman-1)
 BuildRequires: pkgconfig(systemd)
 BuildRequires: nasm
-BuildRequires: nasm
+%if 0%{?fedora} || 0%{?rhel} > 8
+BuildRequires: noopenh264-devel
+%endif
 
 BuildRequires: checkpolicy, selinux-policy-devel
 BuildRequires: %{_hardlink}
 
+BuildRequires: systemd-rpm-macros
+%{?sysusers_requires_compat}
+
 # tigervnc-server-minimal provides Xvnc (default for now)
 # xorgxrdp is another back end, depends on specific Xorg binary, omit
-# Requires: tigervnc-server-minimal
+#Requires: tigervnc-server-minimal
 Requires: xorg-x11-xinit
 Requires: util-linux
 
@@ -74,6 +88,9 @@ Requires(post): systemd-sysv
 Requires(post): /sbin/ldconfig
 Requires(posttrans): openssl
 Requires(preun): systemd
+%if 0%{?fedora}
+Requires(preun): systemd-tmpfiles
+%endif
 Requires(posttrans): systemd
 
 
@@ -93,11 +110,6 @@ talk to xrdp.
 %package selinux
 Summary: SELinux policy module required tu run xrdp
 
-Requires: %{name} = %{epoch}:%{version}-%{release}
-Requires: selinux-policy >= %{_selinux_policy_version}
-Requires(post): /usr/sbin/semodule
-Requires(postun): /usr/sbin/semodule
-
 %description selinux
 This package contains SELinux policy module necessary to run xrdp.
 
@@ -111,8 +123,15 @@ BuildRequires: neutrinordp-devel
 %description rdpproxy
 This package contains RDP Proxy module for xrdp (neutrinordp-any)
 
+Requires: %{name} = %{epoch}:%{version}-%{release}
+%if "%{_selinux_policy_version}" != ""
+Requires: selinux-policy >= %{_selinux_policy_version}
+%endif
+Requires(post): /usr/sbin/semodule
+Requires(postun): /usr/sbin/semodule
+
 %prep
-%autosetup -p1
+%autosetup -p1 -n %{name}-%{version}%{?prerelease}
 %{__cp} %{SOURCE5} .
 
 # SELinux policy module
@@ -125,10 +144,20 @@ echo '#!/bin/bash -l
 
 %build
 autoreconf -vif
-CFLAGS="$RPM_OPT_FLAGS %{?_missing_braces}" \
-%configure --enable-fuse --enable-pixman --enable-painter --enable-vsock \
-           --enable-ipv6 --with-socketdir=%{_rundir}/%{name} --with-imlib2 \
+CFLAGS="$RPM_OPT_FLAGS %{?_missing_braces} %{?_file_offset_bits}" \
+%configure --enable-fuse \
+           --enable-pixman \
+           --enable-painter \
+           --enable-vsock \
+           --enable-ipv6 \
+%if 0%{?fedora} || 0%{?rhel} > 8
+           --enable-openh264 \
+%endif
+           --enable-utmp \
+           --with-socketdir=%{_rundir}/%{name} \
+           --with-imlib2 \
            --enable-neutrinordp
+
 %make_build
 
 # SELinux policy module
@@ -166,6 +195,10 @@ cd -
 #install xrdp.rules /usr/share/polkit-1/rules.d
 %{__install} -Dp -m 644 %{SOURCE7} %{buildroot}%{_datadir}/polkit-1/rules.d/xrdp.rules
 
+# Temporary files for socket
+%{__mkdir_p} %{buildroot}%{_tmpfilesdir}
+%{__install} -m 0644 %{SOURCE8} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+
 # SELinux policy module
 for selinuxvariant in %{selinux_variants}
 do
@@ -175,6 +208,11 @@ do
 done
 %{_hardlink} -cv %{buildroot}%{_datadir}/selinux
 
+%{__install} -p -D -m 0644 %{SOURCE9} %{buildroot}%{_sysusersdir}/xrdp.conf
+
+%pre
+%sysusers_create_compat %{SOURCE9}
+
 %post
 %{?ldconfig}
 %systemd_post xrdp.service
@@ -183,35 +221,41 @@ done
 %systemd_preun xrdp.service
 if [ $1 -eq 0 ]; then
   # Stop services on package removal (see bug 1349083)
-  systemctl stop xrdp.service > /dev/null 2>&1 || :
+  systemctl stop xrdp.service &>/dev/null || :
+  systemd-tmpfiles --remove %{name}.conf &>/dev/null || :
 fi
 
 %triggerun -- xrdp < 0.6.0-1
-systemd-sysv-convert --save xrdp >/dev/null 2>&1 ||:
+systemd-sysv-convert --save xrdp &>/dev/null || :
 
 # If the package is allowed to autostart:
-systemctl preset xrdp.service >/dev/null 2>&1 ||:
+systemctl preset xrdp.service &>/dev/null || :
 
 # Run these because the SysV package being removed won't do them
-/sbin/chkconfig --del xrdp >/dev/null 2>&1 || :
+/sbin/chkconfig --del xrdp &>/dev/null || :
 if [ "`systemctl is-active xrdp.service`" = 'active' ]; then
-    systemctl stop xrdp.service >/dev/null 2>&1 || :
-    systemctl start xrdp.service >/dev/null 2>&1 || :
+    systemctl stop xrdp.service &>/dev/null || :
+    systemctl start xrdp.service &>/dev/null || :
 fi
 
 %ldconfig_postun
 
 %posttrans
 if [ ! -s %{_sysconfdir}/xrdp/rsakeys.ini ]; then
-  (umask 377; touch %{_sysconfdir}/xrdp/rsakeys.ini; %{_bindir}/xrdp-keygen xrdp %{_sysconfdir}/xrdp/rsakeys.ini &>/dev/null)
+  (umask 0137
+   %{_bindir}/xrdp-keygen xrdp %{_sysconfdir}/xrdp/rsakeys.ini &>/dev/null)
 fi
 
 if [ ! -s %{_sysconfdir}/xrdp/cert.pem ]; then
-  (umask 377; openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 3652 \
-    -keyout %{_sysconfdir}/xrdp/key.pem \
-    -out %{_sysconfdir}/xrdp/cert.pem \
-    -config %{_sysconfdir}/xrdp/openssl.conf >/dev/null 2>&1)
+  (umask 0337
+   openssl req -x509 -newkey rsa:2048 -nodes -days 3652 \
+               -keyout %{_sysconfdir}/xrdp/key.pem \
+               -out %{_sysconfdir}/xrdp/cert.pem \
+               -config %{_sysconfdir}/xrdp/openssl.conf &>/dev/null)
 fi
+
+chgrp xrdp %{_sysconfdir}/xrdp/{rsakeys.ini,{key,cert}.pem}
+chmod 0640 %{_sysconfdir}/xrdp/{rsakeys.ini,{key,cert}.pem}
 
 %post selinux
 for selinuxvariant in %{selinux_variants}
@@ -230,12 +274,14 @@ fi
 
 
 %files
-%doc COPYING README.Fedora
+%doc COPYING README.md
 %dir %{_libdir}/xrdp
 %dir %{_sysconfdir}/xrdp
 %dir %{_sysconfdir}/xrdp/pulse
 %dir %{_datadir}/xrdp
 %dir %{_libexecdir}/xrdp
+%{_tmpfilesdir}/%{name}.conf
+%{_sysusersdir}/xrdp.conf
 %config(noreplace) %{_sysconfdir}/xrdp/xrdp.ini
 %config(noreplace) %{_sysconfdir}/pam.d/xrdp-sesman
 %config(noreplace) %{_sysconfdir}/logrotate.d/xrdp
@@ -244,16 +290,21 @@ fi
 %config(noreplace) %{_sysconfdir}/xrdp/km*.ini
 %config(noreplace) %{_sysconfdir}/xrdp/openssl.conf
 %config(noreplace) %{_sysconfdir}/xrdp/xrdp_keyboard.ini
+%config(noreplace) %{_sysconfdir}/xrdp/gfx.toml
 %config(noreplace) %{_sysconfdir}/xrdp/pulse/default.pa
 %exclude %ghost %{_sysconfdir}/xrdp/*.pem
 %exclude %ghost %{_sysconfdir}/xrdp/rsakeys.ini
 %{_libexecdir}/xrdp/startwm*.sh
 %{_libexecdir}/xrdp/reconnectwm.sh
+%{_libexecdir}/xrdp/waitforx
+%{_libexecdir}/xrdp/xrdp-sesexec
+%{_libexecdir}/xrdp/xrdp-droppriv
 %{_bindir}/xrdp-genkeymap
 %{_bindir}/xrdp-sesadmin
 %{_bindir}/xrdp-keygen
 %{_bindir}/xrdp-sesrun
 %{_bindir}/xrdp-dis
+%{_bindir}/xrdp-dumpfv1
 %{_sbindir}/xrdp-chansrv
 %{_sbindir}/xrdp
 %{_sbindir}/xrdp-sesman
@@ -262,18 +313,19 @@ fi
 %{_datadir}/xrdp/cursor1.cur
 %{_datadir}/xrdp/xrdp256.bmp
 %{_datadir}/xrdp/sans-10.fv1
+%{_datadir}/xrdp/sans-18.fv1
 %{_datadir}/xrdp/ad24b.bmp
 %{_datadir}/xrdp/xrdp24b.bmp
 %{_datadir}/xrdp/xrdp_logo.bmp
+%{_datadir}/xrdp/xrdp_logo.png
+%{_datadir}/xrdp/xrdp-chkpriv
+%{_datadir}/xrdp/README.logo
 %{_datadir}/polkit-1/rules.d/xrdp.rules
 %{_mandir}/man5/*
 %{_mandir}/man8/*
 %{_mandir}/man1/*
-%{_libdir}/librfxencode.so*
 %{_libdir}/xrdp/lib*.so*
-%exclude %{_libdir}/librfxencode.so
 %exclude %{_libdir}/xrdp/libcommon.so
-%exclude %{_libdir}/xrdp/libscp.so
 %exclude %{_libdir}/xrdp/libxrdp.so
 %exclude %{_libdir}/xrdp/libxrdpapi.so
 %{_unitdir}/xrdp-sesman.service
@@ -295,9 +347,7 @@ fi
 %{_includedir}/ms-*
 %{_includedir}/xrdp*
 %{_includedir}/rfxcodec_*.h
-%{_libdir}/librfxencode.so
 %{_libdir}/xrdp/libcommon.so
-%{_libdir}/xrdp/libscp.so
 %{_libdir}/xrdp/libxrdp.so
 %{_libdir}/xrdp/libxrdpapi.so
 %{_libdir}/pkgconfig/rfxcodec.pc
@@ -311,14 +361,75 @@ fi
 %{_libdir}/xrdp/libxrdpneutrinordp.so
 
 %changelog
-* Wed May 15 2024 TOMATO <junker.tomato@gmail.com> - 2:0.9.25-2
+* Sun Mar 9 2025 TOMATO <junker.tomato@gmail.com> - 2:0.10.2~9
 - enable NeutrinoRDP proxy module
+- Undo Comment out generic RDP proxy in xrdp.ini
+
+* Thu Feb  6 2025 Bojan Smojver <bojan@rexursive.com> - 1:0.10.2~9
+- Add utmp support contributed upstream by Magnus Lewis-Smith
+
+* Sun Jan 19 2025 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.10.2-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_42_Mass_Rebuild
+
+* Sun Jan  5 2025 Bojan Smojver <bojan@rexursive.com> - 1:0.10.2~7
+- Comment out generic RDP proxy in xrdp.ini
+
+* Sun Jan  5 2025 Bojan Smojver <bojan@rexursive.com> - 1:0.10.2~6
+- Set permissions of cert, key and rsakeys.ini to 0640
+- Revert optional dependency on noopenh264, library dependency exists
+
+* Fri Dec 27 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.10.2~5
+- Move README.Fedora to README.md
+- Adjust ownership/permissions of certs/keys for unprivileged user
+
+* Thu Dec 26 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.10.2~4
+- If openh264 is not present, require noopenh264 instead
+
+* Wed Dec 25 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.10.2~3
+- Run as unprivileged user
+
+* Wed Dec 25 2024 Koichiro Iwao <meta@almalinux.org> - 1:0.10.2-2
+- Enable OpenH264
+
+* Wed Dec 25 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.10.2~1
+- Update to 0.10.2
+
+* Tue Dec 24 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.10.2~0.rc1.1
+- Update to 0.10.2-rc.1
+
+* Wed Sep  4 2024 Miroslav Suchý <msuchy@redhat.com> - 1:0.10.1-2
+- convert license to SPDX
+
+* Wed Jul 31 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.10.1-1
+- Update to 0.10.1
+
+* Sat Jul 20 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.10.0-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
+
+* Sat Jun  1 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.10.0-4
+- Explain downgrades from 0.10.x to 0.9.x in README.Fedora
+
+* Tue May 14 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.10.0-3
+- Only require systemd-tmpfiles on Fedora
+
+* Tue May 14 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.10.0-2
+- Explicitly run systemd-tmpfiles --remove on package removal BZ#2279775
+
+* Tue May 14 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.10.0-1
+- Update to 0.10.0
+- Revert PR 2994
+
+* Wed Apr 03 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.10.0-0.beta.2
+- Update to 0.10.0-beta.2
 
 * Wed Mar 13 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.9.25-2
 - Add upstream PR 2994
 
 * Tue Mar 12 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.9.25-1
 - Update to 0.9.25
+
+* Mon Mar 11 2024 Bojan Smojver <bojan@rexursive.com> - 1:0.10.0-0.beta.1
+- Update to 0.10.0-beta.1
 
 * Sat Jan 27 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1:0.9.24-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
