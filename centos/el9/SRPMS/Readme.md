@@ -4,9 +4,10 @@
 dnf groupinstall -y "Development Tools"
 dnf --enablerepo crb install -y gcc git cmake openssl-devel libX11-devel libXext-devel libXinerama-devel libXcursor-devel \
  libXdamage-devel libXv-devel libxkbfile-devel alsa-lib-devel cups-devel libjpeg-turbo-devel libXrandr-devel turbojpeg-devel pcsc-lite-devel \
- sudo wget which SDL2 hardlink libXfont2-devel bash-completion
+ sudo wget which SDL2 hardlink libXfont2-devel bash-completion fuse3-devel
 
 dnf install -y epel-release
+dnf config-manager --set-enabled crb
 dnf install -y imlib2-devel 
 
 useradd -m builduser
@@ -26,11 +27,11 @@ noopenh264-devel
 sudo dnf localinstall ~/rpmbuild/RPMS/x86_64/neutrinordp-devel-git911c4fc-1.el9.x86_64.rpm \
                       ~/rpmbuild/RPMS/x86_64/neutrinordp-libs-git911c4fc-1.el9.x86_64.rpm 
 
-#  wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/centos/el9/SRPMS/xrdp-0.10.2-9.el9.src.rpm
+#  wget https://github.com/TOMATO-ONE/xrdp-proxy/raw/devel/centos/el9/SRPMS/xrdp-0.10.3-1.el9.src.rpm
 
-rpm -ivh xrdp-0.10.2-9.el9.src.rpm
+rpm -ivh xrdp-0.10.3-1.el9.src.rpm
 
 rpmbuild -ba --clean ~/rpmbuild/SPECS/xrdp.spec
 
 ```
-※2025.03.19 AlmaLinux 9.5 の docker image での build を確認しています。
+※2025.06.23 AlmaLinux 9.6 の docker image での build を確認しています。

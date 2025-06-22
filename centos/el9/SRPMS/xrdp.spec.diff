@@ -1,0 +1,71 @@
+--- xrdp.spec.0103.orig 2025-06-22 11:35:43.992389816 +0000
++++ xrdp.spec   2025-06-22 12:20:36.042488676 +0000
+@@ -21,7 +21,7 @@
+
+ Summary:   Open source remote desktop protocol (RDP) server
+ Name:      xrdp
+-Epoch:     1
++Epoch:     2
+ Version:   0.10.3
+ Release:   1%{?dist}
+ # Automatically converted from old format: ASL 2.0 and GPLv2+ and MIT - review is highly recommended.
+@@ -38,7 +38,7 @@
+ Source8:   %{name}-tmpfiles.conf
+ Source9:   %{name}.sysusers
+ Patch0:    xrdp-0.10.2-sesman.patch
+-Patch1:    xrdp-0.10.3-xrdp-ini.patch
++#Patch1:    xrdp-0.10.3-xrdp-ini.patch
+ Patch2:    xrdp-0.10.1-service.patch
+ Patch3:    xrdp-0.10.0-scripts-libexec.patch
+ Patch4:    xrdp-0.9.6-script-interpreter.patch
+@@ -76,7 +76,7 @@
+
+ # tigervnc-server-minimal provides Xvnc (default for now)
+ # xorgxrdp is another back end, depends on specific Xorg binary, omit
+-Requires: tigervnc-server-minimal
++#Requires: tigervnc-server-minimal
+ Requires: xorg-x11-xinit
+ Requires: util-linux
+ Requires: fuse3
+@@ -122,6 +122,16 @@
+ %description selinux
+ This package contains SELinux policy module necessary to run xrdp.
+
++%package rdpproxy
++Summary: RDP Proxy module for xrdp
++
++Requires: %{name} = %{epoch}:%{version}-%{release}
++Requires: neutrinordp-libs
++BuildRequires: neutrinordp-devel
++
++%description rdpproxy
++This package contains RDP Proxy module for xrdp (neutrinordp-any)
++
+ %prep
+ %autosetup -p1 -n %{name}-%{version}%{?prerelease}
+ %{__cp} %{SOURCE5} .
+@@ -147,7 +157,8 @@
+ %endif
+            --enable-utmp \
+            --with-socketdir=%{_rundir}/%{name} \
+-           --with-imlib2
++           --with-imlib2 \
++           --enable-neutrinordp
+
+ %make_build
+
+@@ -350,7 +361,14 @@
+ %doc SELinux/%{name}.te
+ %{_datadir}/selinux/*/%{name}.pp
+
++%files rdpproxy
++%{_libdir}/xrdp/libxrdpneutrinordp.so
++
+ %changelog
++* Sun Jun 22 2025 TOMATO <junker.tomato@gmail.com> - 2:0.10.3-1
++ - enable NeutrinoRDP proxy module
++ - Undo Comment out generic RDP proxy in xrdp.ini
++
+ * Tue Apr  1 2025 Bojan Smojver <bojan@rexursive.com> - 1:0.10.3-1
+ - Update to 0.10.3
+ - Enable Xvnc over Unix domain socket
